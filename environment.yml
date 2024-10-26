@@ -1,0 +1,10 @@
+name: cosegregation
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - r-base=4.4
+  - numpy
+  - ggplot2
+post-link:
+  - Rscript install/install_r_packages.R

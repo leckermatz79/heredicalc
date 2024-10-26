@@ -1,0 +1,9 @@
+# V3/incidences/sources.yaml
+sources:
+  ci5_ix:
+    type: "online"
+    description: "Cancer Incidence in Five Continents IX"
+    url: "https://gco.iarc.fr/media/ci5/data/ci5-ix/old/vol9/CI5-IXd.zip"
+    parser: "ci5_parser"
+    data_dir: "ci5_ix"
+    format: "zip"

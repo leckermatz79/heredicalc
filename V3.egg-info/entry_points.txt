@@ -1,0 +1,3 @@
+[console_scripts]
+data-handler = V3.incidences.data_handler:main
+main-script = V3.main:main

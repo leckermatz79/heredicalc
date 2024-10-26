@@ -1,0 +1,8 @@
+setup.py
+V3.egg-info/PKG-INFO
+V3.egg-info/SOURCES.txt
+V3.egg-info/dependency_links.txt
+V3.egg-info/entry_points.txt
+V3.egg-info/top_level.txt
+incidences/__init__.py
+incidences/data_handler.py
