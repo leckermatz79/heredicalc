@@ -7,3 +7,4 @@ sources:
     parser: "ci5_parser"
     data_dir: "ci5_ix"
     format: "zip"
+    file_name: "data.zip"
