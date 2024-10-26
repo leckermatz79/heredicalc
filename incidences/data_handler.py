@@ -2,15 +2,16 @@
 import os
 import requests
 import zipfile
+import yaml
 import logging
 from datetime import datetime
 import argparse
 from V3.setup_logging import setup_logging
 
 class DataHandler:
-    """Handles data download, verification, and management for CI5 IX dataset."""
+    """Handles data download, verification, and management for datasets."""
     
-    def __init__(self, source_config, base_data_dir="data", force_download=False):
+    def __init__(self, source_config, base_data_dir=os.path.join(os.path.dirname(__file__), "data"), force_download=False):
         self.source_config = source_config
         self.base_data_dir = base_data_dir
         self.data_dir = os.path.join(base_data_dir, source_config["data_dir"])
@@ -82,9 +83,16 @@ class DataHandler:
         else:
             self.download_and_extract()
 
+def load_sources():
+    """Loads the sources.yaml file and returns the contents."""
+    sources_file_name = os.path.join(os.path.dirname(__file__), "sources.yaml")
+    with open(sources_file_name, "r") as f:
+        return yaml.safe_load(f)
+
 def main():
     # Configure argument parser for CLI options
-    parser = argparse.ArgumentParser(description="Data handler for CI5 IX dataset.")
+    parser = argparse.ArgumentParser(description="Data handler for various datasets.")
+    parser.add_argument("--dataset", required=True, help="Specify the dataset to download (e.g., ci5_ix)")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
                         help="Set the logging level")
     parser.add_argument("--force-download", action="store_true", help="Force data re-download")
@@ -94,17 +102,13 @@ def main():
     log_level = "CRITICAL" if args.log_level == "SILENT" else args.log_level
     setup_logging(log_level)
 
-    # Load source configuration for CI5 IX dataset
-    source_config = {
-        "type": "online",
-        "description": "Cancer Incidence in Five Continents IX",
-        "url": "https://gco.iarc.fr/media/ci5/data/ci5-ix/old/vol9/CI5-IXd.zip",
-        "parser": "ci5_parser",
-        "data_dir": "ci5_ix",
-        "format": "zip"
-    }
-    
-    # Initialize DataHandler and handle data download
+    # Load source configuration for the specified dataset
+    sources = load_sources()
+    if args.dataset not in sources["sources"]:
+        logging.error(f"Dataset '{args.dataset}' not found in sources.yaml.")
+        return
+
+    source_config = sources["sources"][args.dataset]
     data_handler = DataHandler(source_config, force_download=args.force_download)
     data_handler.handle_data()
 

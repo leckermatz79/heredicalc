@@ -5,6 +5,8 @@ dependencies:
   - python=3.10
   - r-base=4.4
   - numpy
-  - ggplot2
+  - r-ggplot2
+  - requests
+  - pyyaml
 post-link:
   - Rscript install/install_r_packages.R
