@@ -65,15 +65,8 @@ class DataHandler:
                 os.remove(file_path)
         logging.info("Data directory cleared except for download history.")
 
-    def download_and_extract(self):
-        """To be implemented by subclasses for specific data types."""
-        raise NotImplementedError("Subclasses should implement this method.")
-
-class ZipDataHandler(DataHandler):
-    """Handler for ZIP file datasets."""
-
     def download_file(self):
-        """Downloads the ZIP file and returns its name."""
+        """Downloads a file and returns its path."""
         os.makedirs(self.data_dir, exist_ok=True)
         response = requests.get(self.url, stream=True)
         content_disposition = response.headers.get('content-disposition')
@@ -82,18 +75,25 @@ class ZipDataHandler(DataHandler):
         if content_disposition:
             file_name = content_disposition.split("filename=")[-1].strip('"')
         else:
-            file_name = "data.zip"
+            file_name = "downloaded_file"  # Default name if header is missing
         
-        zip_path = os.path.join(self.data_dir, file_name)
-        
+        file_path = os.path.join(self.data_dir, file_name)
+
         logging.info(f"Downloading data from {self.url}...")
-        with open(zip_path, "wb") as file:
+        with open(file_path, "wb") as file:
             for chunk in response.iter_content(chunk_size=8192):
                 file.write(chunk)
-        logging.info(f"Download completed: {zip_path}")
+        logging.info(f"Download completed: {file_path}")
         
-        return zip_path  # Returns the actual path of the ZIP file
-    
+        return file_path  # Returns the actual file path
+
+    def download_and_extract(self):
+        """To be implemented by subclasses for specific data types."""
+        raise NotImplementedError("Subclasses should implement this method.")
+
+class ZipDataHandler(DataHandler):
+    """Handler for ZIP file datasets."""
+
     def download_and_extract(self):
         """Downloads and extracts the data ZIP file."""
         zip_path = self.download_file()  # Retrieves the actual file path
@@ -105,22 +105,15 @@ class ZipDataHandler(DataHandler):
         
         logging.info(f"Data extracted to {self.data_dir}")
         self.log_download_timestamp()
-        
+
 class UncompressedDataHandler(DataHandler):
     """Handler for uncompressed file datasets."""
 
     def download_and_extract(self):
-        """Downloads an uncompressed file."""
-        os.makedirs(self.data_dir, exist_ok=True)
-        file_path = os.path.join(self.data_dir, "data_file")
-
-        logging.info(f"Downloading data from {self.url}...")
-        response = requests.get(self.url)
-        with open(file_path, "wb") as file:
-            file.write(response.content)
-        logging.info(f"Download completed and saved to {file_path}")
-        
+        """Downloads an uncompressed file (no extraction needed)."""
+        file_path = self.download_file()  # Get the actual file path
         self.log_download_timestamp()
+        logging.info(f"File saved as {file_path}, no extraction required.")
 
 def get_handler(source_config, force_download=False):
     """Factory function to select the appropriate DataHandler."""
