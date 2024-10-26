@@ -3,5 +3,7 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
-data/  # Exclude large data files
+data/
 logs/
+incidences/data/
+incidences/__pycache__/
