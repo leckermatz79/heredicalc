@@ -8,5 +8,6 @@ dependencies:
   - r-ggplot2
   - requests
   - pyyaml
+  - pandas
 post-link:
   - Rscript install/install_r_packages.R

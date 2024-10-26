@@ -7,6 +7,8 @@ import logging
 from datetime import datetime
 import argparse
 from V3.setup_logging import setup_logging
+from V3.incidences.parsers.data_parser_factory import DataParserFactory
+
 
 class DataHandler:
     """Base handler for data download, verification, and management."""
@@ -134,6 +136,7 @@ def load_sources():
 def main():
     parser = argparse.ArgumentParser(description="Data handler for various datasets.")
     parser.add_argument("--dataset", required=True, help="Specify the dataset to download (e.g., ci5_ix)")
+    parser.add_argument("--population", help="Specify the population by key number (e.g., 38402499)")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
                         help="Set the logging level")
     parser.add_argument("--force-download", action="store_true", help="Force data re-download")
@@ -150,6 +153,9 @@ def main():
     source_config = sources["sources"][args.dataset]
     data_handler = get_handler(source_config, force_download=args.force_download)
     data_handler.handle_data()
-
+    data_parser = DataParserFactory.create_parser(source_config, population=args.population)
+    df = data_parser.parse_population_data()
+    logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
+    
 if __name__ == "__main__":
     main()

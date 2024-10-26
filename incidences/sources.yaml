@@ -4,7 +4,47 @@ sources:
     type: "online"
     description: "Cancer Incidence in Five Continents IX"
     url: "https://gco.iarc.fr/media/ci5/data/ci5-ix/old/vol9/CI5-IXd.zip"
-    parser: "ci5_parser"
+    parser: "ci5_detailed_parser"
     data_dir: "ci5_ix"
     format: "zip"
-    file_name: "data.zip"
+    default_population: "38402499"
+      
+  ci5_x:
+    type: "online"
+    description: "Cancer Incidence in Five Continents X"
+    url: "https://gco.iarc.fr/media/ci5/data/CI5-Xd.zip"
+    parser: "ci5_detailed_parser"
+    data_dir: "ci5_x"
+    format: "zip"
+  
+  ci5_xi_summary:
+    type: "online"
+    description: "Cancer Incidence in Five Continents XI - summary"
+    url: "https://gco.iarc.fr/media/ci5/data/ci5-xi/CI5-XI.zip"
+    parser: "ci5_summary_parser"
+    data_dir: "ci5_xi_summary"
+    format: "zip"
+
+  ci5_xi_detailed:
+    type: "online"
+    description: "Cancer Incidence in Five Continents XI - detailed"
+    url: "https://gco.iarc.fr/media/ci5/data/ci5-xi/CI5-XId.zip"
+    parser: "ci5_detailed_parser"
+    data_dir: "ci5_xi_detailed"
+    format: "zip"
+  
+  ci5_xii_summary:
+    type: "online"
+    description: "Cancer Incidence in Five Continents XII - summary"
+    url: "https://gco.iarc.fr/media/ci5/data/vol12/Download/CI5-XII.zip"
+    parser: "ci5_parser"
+    data_dir: "ci5_xii_summary"
+    format: "zip"
+
+  ci5_xii_detailed:
+    type: "online"
+    description: "Cancer Incidence in Five Continents XII - detailed"
+    url: "https://gco.iarc.fr/media/ci5/data/vol12/Download/CI5-XIId.zip"
+    parser: "ci5_summary_parser"
+    data_dir: "ci5_xii_detailed"
+    format: "zip"
