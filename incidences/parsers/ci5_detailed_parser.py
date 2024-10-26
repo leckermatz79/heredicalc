@@ -13,3 +13,4 @@ class CI5DetailedParser(DataParser):
         # Example data processing specific to CI5 detailed
         logging.info(f"Parsed CI5 detailed data for population {self.population}")
         return df
+    

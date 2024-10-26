@@ -133,29 +133,57 @@ def load_sources():
     with open(sources_path, "r") as f:
         return yaml.safe_load(f)
 
-def main():
+def load_valid_phenotypes(dataset_name):
+    """Load the list of valid phenotype names from the specified dataset in sources.yaml."""
+    with open(os.path.join(os.path.dirname(__file__),"sources.yaml"), "r") as file:
+        sources_config = yaml.safe_load(file)["sources"]
+    
+    # Check if the dataset exists in sources.yaml
+    if dataset_name not in sources_config:
+        raise ValueError(f"Dataset '{dataset_name}' not found in sources.yaml.")
+    
+    # Extract the phenotype mappings for the specified dataset
+    valid_phenotypes = set(sources_config[dataset_name].get("phenotype_mappings", {}).keys())
+    return valid_phenotypes
+
+def validate_phenotypes(selected_phenotypes, valid_phenotypes):
+    """Check if all selected phenotypes are valid."""
+    invalid_phenotypes = [p for p in selected_phenotypes if p not in valid_phenotypes]
+    if invalid_phenotypes:
+        raise ValueError(f"Invalid phenotypes detected: {', '.join(invalid_phenotypes)}. Please check sources.yaml.")
+    print("All selected phenotypes are valid.")
+
+def parse_arguments():
     parser = argparse.ArgumentParser(description="Data handler for various datasets.")
     parser.add_argument("--dataset", required=True, help="Specify the dataset to download (e.g., ci5_ix)")
     parser.add_argument("--population", help="Specify the population by key number (e.g., 38402499)")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
                         help="Set the logging level")
     parser.add_argument("--force-download", action="store_true", help="Force data re-download")
+    parser.add_argument("--phenotypes",  nargs='+', required=True, help="Specify phenotypes to be included in incidence file (eg, BreastCancer OvarianCancer).")
     args = parser.parse_args()
 
+    # Load and validate phenotypes for the specified dataset
+    valid_phenotypes = load_valid_phenotypes(args.dataset)
+    validate_phenotypes(args.phenotypes, valid_phenotypes)
+    return args
+
+def main():
+    args = parse_arguments()
     log_level = "CRITICAL" if args.log_level == "SILENT" else args.log_level
     setup_logging(log_level)
 
-    sources = load_sources()
-    if args.dataset not in sources["sources"]:
+    sources = load_sources()["sources"]
+    if args.dataset not in sources:
         logging.error(f"Dataset '{args.dataset}' not found in sources.yaml.")
         return
 
-    source_config = sources["sources"][args.dataset]
+    source_config = sources[args.dataset]
     data_handler = get_handler(source_config, force_download=args.force_download)
     data_handler.handle_data()
     data_parser = DataParserFactory.create_parser(source_config, population=args.population)
     df = data_parser.parse_population_data()
     logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
-    
+
 if __name__ == "__main__":
     main()
