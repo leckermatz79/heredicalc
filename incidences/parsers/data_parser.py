@@ -11,7 +11,7 @@ class DataParser(ABC):
     def __init__(self, source_config, population=None):
         self.source_config = source_config
         self.population = population or source_config.get("default_population")
-        self.data_dir = os.path.join(os.path.dirname(__file__), "data", source_config["data_dir"])
+        self.data_dir = os.path.join(os.path.dirname(__file__),"..", "data", source_config["data_dir"])
 
     def get_population_file_path(self):
         """Determine the correct file path for the given population."""
