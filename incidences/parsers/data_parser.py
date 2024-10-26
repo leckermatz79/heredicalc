@@ -34,6 +34,7 @@ class DataParser(ABC):
             phenotype_ids.extend(mapped_ids)
         
         # Filter data by these phenotype IDs
+        ######## Column name has to go! 
         filtered_df = df[df["cancer_site"].isin(phenotype_ids)]
         print(f"Data filtered to include phenotypes: {phenotypes} (IDs: {phenotype_ids})")
         
