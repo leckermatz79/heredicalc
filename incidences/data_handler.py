@@ -144,7 +144,10 @@ def load_valid_phenotypes(dataset_name):
         raise ValueError(f"Dataset '{dataset_name}' not found in sources.yaml.")
     
     # Extract the phenotype mappings for the specified dataset
-    valid_phenotypes = set(sources_config[dataset_name].get("phenotype_mappings", {}).keys())
+    valid_phenotypes = set( 
+        key for key, ids in sources_config[dataset_name].get("phenotype_mappings", {}).items()
+        if ids  # Only include if there are assigned IDs
+    )
     return valid_phenotypes
 
 def validate_phenotypes(selected_phenotypes, valid_phenotypes):
@@ -163,7 +166,7 @@ def parse_arguments():
     parser.add_argument("--force-download", action="store_true", help="Force data re-download")
     parser.add_argument("--phenotypes",  nargs='+', required=True, help="Specify phenotypes to be included in incidence file (eg, BreastCancer OvarianCancer).")
     args = parser.parse_args()
-
+    args.phenotypes = list(set(args.phenotypes))
     # Load and validate phenotypes for the specified dataset
     valid_phenotypes = load_valid_phenotypes(args.dataset)
     validate_phenotypes(args.phenotypes, valid_phenotypes)
@@ -179,20 +182,19 @@ def main():
         logging.error(f"Dataset '{args.dataset}' not found in sources.yaml.")
         return
 
-    ####### Implement here: Filtering ###########
     source_config = sources[args.dataset]
     data_handler = get_handler(source_config, force_download=args.force_download)
     data_handler.handle_data()
+
     data_parser = DataParserFactory.create_parser(source_config, population=args.population)
-    df = data_parser.parse_population_data()
+    df = data_parser.parse_data()
     logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
-    ##test output##
+
+    df = data_parser.filter_by_phenotypes(df, args.phenotypes)
     print (df.head())
 
-    df2 = data_parser.parse_data(df)
-    logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
-    ##test output##
-    print (df2.head())
-
+    incidence_table = data_parser.build_incidence_table(df)
+    print(incidence_table.head(50))
+    
 if __name__ == "__main__":
     main()

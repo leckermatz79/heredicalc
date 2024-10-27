@@ -55,8 +55,8 @@ sources:
         - { min: 80, max: 84 }
         - { min: 85, max: null }  # open-ended age class
         - { min: null, max: null }  # class for unknown age
-      unknown_age_class: 19
-      open_ended_age_class: 18
+      unknown_age_class: 18
+      open_ended_age_class: 17
   
   ci5_x:
     type: "online"

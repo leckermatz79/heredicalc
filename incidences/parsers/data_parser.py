@@ -58,10 +58,9 @@ class DataParser(ABC):
                 print(f"Warning: Phenotype '{phenotype}' not found in mappings.")
             phenotype_ids.extend(mapped_ids)
         
-        # Filter data by these phenotype IDs
-        ######## Column name has to go! 
-        filtered_df = df[df["cancer_site"].isin(phenotype_ids)]
-        print(f"Data filtered to include phenotypes: {phenotypes} (IDs: {phenotype_ids})")
+        # Filter data by phenotype IDs in the 'phenotype' column
+        filtered_df = df[df["phenotype"].isin(phenotype_ids)]
+        logging.info(f"Data filtered to include phenotypes: {phenotypes} (IDs: {phenotype_ids})")
         
         return filtered_df
     
@@ -76,11 +75,6 @@ class DataParser(ABC):
         logging.info(f"Using data file: {file_path}")
         return file_path
 
-    @abstractmethod
-    def parse_population_data(self):
-        """Parse the data for the given population."""
-        raise NotImplementedError("Subclasses should implement this method (parse_population_data).")
-    
     @abstractmethod
     def parse_data(self, df):
         """Abstract method to be implemented in subclasses."""
