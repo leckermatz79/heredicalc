@@ -29,7 +29,7 @@ class DataHandler:
         """Logs a new timestamp in the download history file."""
         timestamp = datetime.now().isoformat()
         with open(self.history_file, "a") as f:
-            f.write(f"{timestamp} - Downloaded data from {self.url}\n")
+            f.write(f"{timestamp}\nDownloaded data from {self.url}\n")
         logging.info(f"Download timestamp logged: {timestamp}")
 
     def prompt_for_redownload(self):
@@ -37,11 +37,11 @@ class DataHandler:
         if os.path.exists(self.history_file):
             with open(self.history_file, "r") as f:
                 last_download = f.readlines()[-1].strip()
-            print(f"Data already exists. Last download: {last_download}")
+            print(f"Data already exists. \nLast download: {last_download}")
         else:
             print("Data directory exists but no history found.")
 
-        user_input = input("Do you want to redownload the data? (y/n): ").strip().lower()
+        user_input = input("\nDo you want to redownload the data? (y/n): ").strip().lower()
         return user_input == "y"
 
     def handle_data(self):
@@ -57,6 +57,7 @@ class DataHandler:
                 logging.info("Data download skipped.")
         else:
             self.download_and_extract()
+        
 
     def clear_data_dir(self):
         """Clears all files from the data directory except for the history file."""
@@ -178,12 +179,20 @@ def main():
         logging.error(f"Dataset '{args.dataset}' not found in sources.yaml.")
         return
 
+    ####### Implement here: Filtering ###########
     source_config = sources[args.dataset]
     data_handler = get_handler(source_config, force_download=args.force_download)
     data_handler.handle_data()
     data_parser = DataParserFactory.create_parser(source_config, population=args.population)
     df = data_parser.parse_population_data()
     logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
+    ##test output##
+    print (df.head())
+
+    df2 = data_parser.parse_data(df)
+    logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
+    ##test output##
+    print (df2.head())
 
 if __name__ == "__main__":
     main()

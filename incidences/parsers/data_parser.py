@@ -13,7 +13,32 @@ class DataParser(ABC):
         self.population = population or source_config.get("default_population")
         self.data_dir = os.path.join(os.path.dirname(__file__),"..", "data", source_config["data_dir"])
         self.phenotype_mappings = source_config.get("phenotype_mappings", {})
+        self.column_mappings = self.source_config.get("column_mappings", {})
+        self.gender_mapping = self.source_config.get("gender_mapping", {})
 
+    def get_column(self, column_name, df):
+        """
+        Retrieve the column from the DataFrame based on the specified column mappings.
+        
+        Parameters:
+            column_name (str): The column name in column_mappings (e.g., "gender_col").
+            df (pd.DataFrame): The DataFrame containing the data.
+        
+        Returns:
+            The column (Series) from the DataFrame.
+        """
+        col_spec = self.column_mappings.get(column_name)
+        if isinstance(col_spec, int) and col_spec >= 0:
+            # Treat as column index if it is a positive integer
+            return df.iloc[:, col_spec]
+        elif isinstance(col_spec, str):
+            # Check if the DataFrame has headers
+            if not isinstance(df.columns, pd.Index) or not df.columns.is_object():
+                raise ValueError(f"The dataset for '{column_name}' requires a header row, which is missing.")
+            return df[col_spec]  # Column as name
+        else:
+            raise ValueError(f"Invalid column specification for '{column_name}' in sources.yaml.")
+        
     def filter_by_phenotypes(self, df, phenotypes):
         """
         Filter data by phenotypes based on the mappings in sources.yaml.
@@ -54,4 +79,9 @@ class DataParser(ABC):
     @abstractmethod
     def parse_population_data(self):
         """Parse the data for the given population."""
-        pass
+        raise NotImplementedError("Subclasses should implement this method (parse_population_data).")
+    
+    @abstractmethod
+    def parse_data(self, df):
+        """Abstract method to be implemented in subclasses."""
+        raise NotImplementedError("Subclasses should implement this method (parse_data).")
