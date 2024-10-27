@@ -1,55 +1,67 @@
 # V3/penetrances/penetrance_models.py
-from abc import ABC, abstractmethod
 import logging
+from abc import ABC, abstractmethod
+from V3.penetrances.relative_risk.relative_risk_models import RelativeRiskModel
+from V3.penetrances.crhf_models import CRHFModel
 
 class PenetranceModel(ABC):
     """
-    Abstract base class for calculating penetrance based on a given incidence table, 
-    CRHF values, and relative risks.
+    Abstract base class for calculating penetrance.
     """
-    
-    def __init__(self, incidence_table, crhf_model, relative_risks):
-        self.incidence_table = incidence_table
+    def __init__(self, incidence_data, relative_risk_model: RelativeRiskModel, crhf_model: CRHFModel):
+        self.incidence_data = incidence_data
+        self.relative_risk_model = relative_risk_model
         self.crhf_model = crhf_model
-        self.relative_risks = relative_risks
-    
+        logging.debug("Initialized PenetranceModel with incidence data and models.")
+
     @abstractmethod
-    def calculate_penetrance(self):
+    def calculate_penetrance(self, gene, phenotype):
         """
-        Abstract method for calculating penetrance. To be implemented by subclasses.
-        """
-        pass
-
-class SimpleDistributionPenetranceModel(PenetranceModel):
-    """
-    A simple penetrance model that assumes cases are uniformly distributed within each age group.
-    """
-
-    def calculate_penetrance(self):
-        """
-        Calculates penetrance by uniformly distributing cases within each age group.
+        Abstract method to calculate penetrance for a given gene and phenotype.
         
+        Raises:
+            NotImplementedError: Must be implemented in subclasses.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")
+
+
+class UniformPenetranceModel(PenetranceModel):
+    """
+    Uniform Penetrance Model that assumes a uniform distribution of incidence within age groups.
+    """
+    def calculate_penetrance(self, gene, phenotype):
+        """
+        Calculate the penetrance assuming a uniform distribution across age groups.
+
+        Parameters:
+            gene (str): Gene symbol (e.g., "BRCA1").
+            phenotype (str): Phenotype (e.g., "BreastCancer").
+
         Returns:
-            DataFrame: A modified incidence table with calculated penetrance values.
+            dict: Penetrance values by age group for both heterozygous and homozygous carriers.
         """
-        logging.info("Calculating penetrance using the simple distribution model.")
-        
-        # Placeholder logic for simple uniform distribution
-        for index, row in self.incidence_table.iterrows():
-            crhf = self.crhf_model.get_crhf(row['phenotype'])
-            risk_factor = self.relative_risks.get(row['age_class'], 1)  # Default risk factor is 1 if age_class is not in relative risks
-            row['penetrance'] = row['cases'] * crhf * risk_factor / row['person_years']
-        
-        return self.incidence_table
+        penetrance_results = []
+        crhf = self.crhf_model.get_crhf(gene)
 
-class PenetranceModelFactory:
-    """
-    Factory class to create a PenetranceModel instance based on the provided model type.
-    """
+        for _, row in self.incidence_data.iterrows():
+            age = row["age_class_lower"]
+            gender = row["gender"]
+            base_incidence = row["cases"] / row["person_years"]
+            
+            # Get relative risks for the specified phenotype and gender
+            hetero_rr, homo_rr = self.relative_risk_model.get_relative_risk(age, phenotype, gender)
 
-    @staticmethod
-    def create_penetrance_model(model_type, incidence_table, crhf_model, relative_risks):
-        if model_type == "simple_distribution":
-            return SimpleDistributionPenetranceModel(incidence_table, crhf_model, relative_risks)
-        else:
-            raise ValueError(f"Unsupported penetrance model type: {model_type}")
+            # Calculate penetrance values
+            hetero_penetrance = base_incidence * hetero_rr * crhf
+            homo_penetrance = base_incidence * homo_rr * crhf**2
+
+            penetrance_results.append({
+                "age_class": row["age_class_lower"],
+                "gender": gender,
+                "phenotype": phenotype,
+                "heterozygous_penetrance": hetero_penetrance,
+                "homozygous_penetrance": homo_penetrance
+            })
+
+        logging.info(f"Penetrance for {gene} and {phenotype} calculated successfully.")
+        return penetrance_results
