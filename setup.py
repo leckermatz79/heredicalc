@@ -7,7 +7,8 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'data-handler=V3.incidences.data_handler:main',  # incidences data handler
+            'penetrances=V3.penetrances.data_handler:main', # penetrances data handler
+            'incidences=V3.incidences.data_handler:main',  # incidences data handler
             'main-script=V3.main:main',  # main program
         ],
     },

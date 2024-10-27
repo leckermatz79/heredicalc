@@ -1,3 +1,4 @@
 [console_scripts]
-data-handler = V3.incidences.data_handler:main
+incidences = V3.incidences.data_handler:main
 main-script = V3.main:main
+penetrances = V3.penetrances.data_handler:main

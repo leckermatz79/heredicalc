@@ -1,0 +1,8 @@
+# V3/penetrances/crhf_values.yaml
+# This file hold data for CRHF values for various genes. 
+# It is possible to model CRHF values along various parameters, but these features have not been implemented yet (due to lack of time and data). 
+# The "constant" model assumes a constant frequenca in the general population independent of population, age and gender. 
+# Special cases (like CRHF values for the Ashkenazi Jewish population) can be stated analogous to the "constant" model. 
+constant:
+  BRCA1: 0.00075
+  BRCA2: 0.0013
