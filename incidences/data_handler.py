@@ -191,10 +191,10 @@ def main():
     logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
 
     df = data_parser.filter_by_phenotypes(df, args.phenotypes)
-    print (df.head())
+    #print (df.head(50))
 
     incidence_table = data_parser.build_incidence_table(df)
-    print(incidence_table.head(50))
+    print(incidence_table)
     
 if __name__ == "__main__":
     main()

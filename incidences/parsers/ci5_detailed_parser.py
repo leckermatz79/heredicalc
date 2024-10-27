@@ -29,17 +29,18 @@ class CI5DetailedParser(DataParser):
         })
         
         return parsed_df
-    
+
     def build_incidence_table(self, df):
         """
         Build the incidence table by transforming gender, splitting age into bounds,
-        and resetting the index with the name 'incidence_class'.
+        replacing phenotype IDs with canonical names, and aggregating cases for multi-ID phenotypes.
         
         Parameters:
-            df (pd.DataFrame): The filtered DataFrame with raw gender and age columns.
+            df (pd.DataFrame): The filtered DataFrame with raw gender, age, and phenotype columns.
         
         Returns:
-            pd.DataFrame: The incidence table with readable gender, split age bounds, and reset index.
+            pd.DataFrame: The final incidence table with readable gender, aggregated cases,
+                          and single rows for each age, gender, and phenotype combination.
         """
         # Transform gender to readable format
         gender_col = "gender"
@@ -48,31 +49,52 @@ class CI5DetailedParser(DataParser):
              self.gender_mapping.get("female", 2): "F"}
         ).fillna("U")  # Default to 'U' if gender is unrecognized
 
-        # Split age into lower and upper bounds using the index as age class ID
-        age_class_ranges = [self.get_age_range(age_class_id) for age_class_id in df["age"]]
-        df[["age_class_lower", "age_class_upper"]] = pd.DataFrame(age_class_ranges, index=df.index)
+        # Apply age range transformation with the correct index offset for age_class_id
+        df[["age_class_lower", "age_class_upper"]] = df["age"].apply(lambda x: self.get_age_range(x - 1)).apply(pd.Series)
+
+        # Replace phenotype IDs with canonical phenotype names
+        phenotype_map = {id_: phenotype for phenotype, ids in self.phenotype_mappings.items() for id_ in ids}
+        df["phenotype"] = df["phenotype"].map(phenotype_map)
+
+        # Create a new DataFrame to aggregate cases and person years for each unique combination
+        incidence_table = (
+            df.groupby(["age_class_lower", "age_class_upper", "phenotype", "gender"], dropna=False, as_index=False)
+            .agg({"cases": "sum", "person_years": "first"})  # Sum cases and keep person_years
+        )
+
+        # Sort the incidence_table by phenotype, gender, and age_class_lower
+        incidence_table.sort_values(by=["phenotype", "gender", "age_class_lower"], inplace=True)
 
         # Reset index and rename it to 'incidence_class'
-        df.reset_index(drop=True, inplace=True)
-        df.index.name = "incidence_class"
-        
-        # Select relevant columns
-        incidence_table = df[["gender", "phenotype", "age_class_lower", "age_class_upper", "cases", "person_years"]]
+        incidence_table.reset_index(drop=True, inplace=True)
+        incidence_table.index.name = "incidence_class"
+
+        # Reorder columns as specified
+        incidence_table = incidence_table[["gender", "phenotype", "age_class_lower", "age_class_upper", "cases", "person_years"]]
+
         return incidence_table
-    
+
     def get_age_range(self, age_class_id):
         """Return the age range (lower, upper) for a given age class ID based on sources.yaml."""
         age_structure = self.source_config.get("age_structure", {})
         age_groups = age_structure.get("age_groups", [])
+        unknown_age_class = age_structure.get("unknown_age_class", None)
+        open_ended_age_class = age_structure.get("open_ended_age_class", None)
 
-        # Adjust for 1-based indexing in age_class_id by subtracting 1
-        adjusted_index = age_class_id - 1
+        # Check for 'Unknown' age class
+        if age_class_id == unknown_age_class:
+            return None, None
 
-        # Verify age_class_id is a valid index
+        # Check for open-ended age class
+        if age_class_id == open_ended_age_class:
+            age_range = age_groups[age_class_id]
+            return age_range.get("min", None), None  # No upper bound for open-ended age group
+
+        # Standard age range
         try:
-            age_range = age_groups[adjusted_index]
+            age_range = age_groups[age_class_id]
         except IndexError:
-            logging.warning(f"Age class ID '{age_class_id}' (adjusted to index '{adjusted_index}') is out of range.")
+            logging.warning(f"Age class ID '{age_class_id}' is out of range.")
             return None, None
 
         return age_range.get("min", None), age_range.get("max", None)
