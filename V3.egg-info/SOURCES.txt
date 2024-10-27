@@ -7,4 +7,9 @@ V3.egg-info/top_level.txt
 incidences/__init__.py
 incidences/data_handler.py
 penetrances/__init__.py
+penetrances/crhf_models.py
 penetrances/data_handler.py
+penetrances/penetrance_models.py
+penetrances/relative_risk/__init__.py
+penetrances/relative_risk/relative_risk_models.py
+penetrances/relative_risk/static_lookup_rr_model.py
