@@ -2,6 +2,7 @@
 from V3.incidences.parsers.data_parser import DataParser
 import pandas as pd
 import logging
+import sys
 
 class CI5DetailedParser(DataParser):
     """Parser for CI5 detailed data format."""
@@ -43,7 +44,7 @@ class CI5DetailedParser(DataParser):
                           and single rows for each age, gender, and phenotype combination.
         """
         # Transform gender to readable format
-        gender_col = "gender"
+        gender_col = "gender" # "gender" is name of the gender column in our interim incidence data frame.
         df[gender_col] = df[gender_col].map(
             {self.gender_mapping.get("male", 1): "M",
              self.gender_mapping.get("female", 2): "F"}
