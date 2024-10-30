@@ -1,4 +1,4 @@
 [console_scripts]
-incidences = V3.incidences.data_handler:main
+incidences = V3.bin.incidences:main
 main-script = V3.main:main
 penetrances = V3.penetrances.data_handler:main

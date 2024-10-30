@@ -5,6 +5,9 @@ from V3.incidences.incidence_data_source_handlers.data_source_handler import Dat
 class UncompressedDataHandler(DataSourceHandler):
     """Handler for uncompressed file datasets."""
 
+    def __init__(self, source_config, base_data_dir=None, force_download=False):
+        super().__init__(source_config, base_data_dir=base_data_dir, force_download=force_download)
+
     def download_and_extract(self):
         """
         Downloads an uncompressed file directly into the data directory.

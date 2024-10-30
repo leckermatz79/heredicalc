@@ -11,7 +11,7 @@ class DataSourceHandler(ABC):
     def __init__(self, source_config, base_data_dir=None, force_download=False):
         self.base_data_dir = base_data_dir or os.path.join(os.path.dirname(__file__), "../../data_sources/incidences")
         self.source_config = source_config
-        self.data_dir = os.path.join(base_data_dir, source_config["data_dir"])
+        self.data_dir = os.path.join(self.base_data_dir, source_config["data_dir"])
         self.force_download = force_download
         self.history_file = os.path.join(self.data_dir, "download_history.log")
         self.url = source_config["url"]

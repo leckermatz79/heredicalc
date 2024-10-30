@@ -1,9 +1,9 @@
-# V3/incidences/incidence_data_source_handlers/incidence_data_source_handler_factory.py
+# V3/incidences/incidence_data_source_handlers/data_source_handler_factory.py
 import logging
 from V3.incidences.incidence_data_source_handlers.zip_data_handler import ZipDataHandler
 from V3.incidences.incidence_data_source_handlers.uncompressed_data_handler import UncompressedDataHandler
 
-class IncidenceDataSourceHandlerFactory:
+class DataSourceHandlerFactory:
     """
     Factory class to create the appropriate DataSourceHandler instance based on the data format.
     """

@@ -8,7 +8,7 @@ setup(
     entry_points={
         'console_scripts': [
             'penetrances=V3.penetrances.data_handler:main', # penetrances data handler
-            'incidences=V3.incidences.data_handler:main',  # incidences data handler
+            'incidences=V3.bin.incidences:main', # incidences data handler
             'main-script=V3.main:main',  # main program
         ],
     },
