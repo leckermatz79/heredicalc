@@ -1,10 +1,10 @@
-# V3/incidences/parsers/ci5_detailed_parser.py
-from V3.incidences.parsers.data_parser import DataParser
+# V3/incidences/incidence_models/ci5_detailed_incidence_model.py
+from V3.incidences.incidence_models.incidence_data_model import IncidenceDataModel
 import pandas as pd
 import logging
 import sys
 
-class CI5DetailedParser(DataParser):
+class CI5DetailedIncidenceModel(IncidenceDataModel):
     """Parser for CI5 detailed data format."""
     def parse_data(self, df=None):
         """Parse the CSV data file for the selected population in CI5 detailed format."""

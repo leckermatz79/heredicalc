@@ -7,3 +7,6 @@ data/
 logs/
 incidences/data/
 incidences/__pycache__/
+V3.egg-info/
+tree.txt
+rules.txt

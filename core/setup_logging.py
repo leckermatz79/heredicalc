@@ -1,4 +1,4 @@
-# V3/setup_logging.py
+# V3/core/setup_logging.py
 import logging
 import sys
 

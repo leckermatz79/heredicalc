@@ -6,8 +6,8 @@ import yaml
 import logging
 from datetime import datetime
 import argparse
-from V3.setup_logging import setup_logging
-from V3.incidences.parsers.data_parser_factory import DataParserFactory
+from V3.core.setup_logging import setup_logging
+from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
 
 
 class DataHandler:
@@ -186,7 +186,7 @@ def main():
     data_handler = get_handler(source_config, force_download=args.force_download)
     data_handler.handle_data()
 
-    data_parser = DataParserFactory.create_parser(source_config, population=args.population)
+    data_parser = IncidenceDataModelFactory.create_parser(source_config, population=args.population)
     df = data_parser.parse_data()
     logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
 

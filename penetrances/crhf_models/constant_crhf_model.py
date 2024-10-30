@@ -1,33 +1,8 @@
-# V3/penetrances/crhf_models.py
+# V3/penetrances/crhf_models/constant_crhf_model.py
 import yaml
 import os
 import logging
-from abc import ABC, abstractmethod
-
-class CRHFModel(ABC):
-    """
-    Abstract base class for CRHF models.
-    
-    Subclasses must implement the `get_crhf` method to calculate 
-    the CRHF (carrier risk heterozygous frequency) for a specific gene.
-    """
-    
-    @abstractmethod
-    def get_crhf(self, gene):
-        """
-        Retrieve the CRHF for a given gene.
-        
-        Parameters:
-            gene (str): Gene symbol for which to get the CRHF.
-        
-        Returns:
-            float: The CRHF value.
-        
-        Raises:
-            NotImplementedError: If subclass does not implement this method.
-        """
-        raise NotImplementedError("Subclasses should implement this method.")
-
+from .crhf_model import CRHFModel
 
 class ConstantCRHFModel(CRHFModel):
     """
@@ -55,13 +30,3 @@ class ConstantCRHFModel(CRHFModel):
             return None
         logging.info(f"CRHF for {gene}: {crhf_value}")
         return crhf_value
-
-class CRHFModelFactory:
-    """Factory to create CRHF model instances."""
-
-    @staticmethod
-    def create_model(model_name="constant"):
-        if model_name == "constant":
-            return ConstantCRHFModel()
-        else:
-            raise ValueError(f"CRHF model '{model_name}' is not implemented.")

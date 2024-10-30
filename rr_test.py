@@ -27,8 +27,8 @@ def test_rr_model():
     for age, phenotype, gender in test_cases:
         try:
             heterozygous_rr, homozygous_rr = rr_model.get_relative_risk(age, phenotype, gender)
-            print(f"Relative Risk for {phenotype} at age {age} (Gender: {gender}):")
-            print(f"Heterozygous RR: {heterozygous_rr}, Homozygous RR: {homozygous_rr}")
+            #print(f"Relative Risk for {phenotype} at age {age} (Gender: {gender}):")
+            #print(f"Heterozygous RR: {heterozygous_rr}, Homozygous RR: {homozygous_rr}")
         except ValueError as e:
             print(f"Error for {phenotype} at age {age} (Gender: {gender}): {e}")
 

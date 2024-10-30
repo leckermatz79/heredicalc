@@ -1,11 +1,11 @@
-# V3/incidences/parsers/data_parser.py
+# V3/incidences/incidence_models/incidence_data_model.py
 import os
 import yaml
 import logging
 import pandas as pd
 from abc import ABC, abstractmethod
 
-class DataParser(ABC):
+class IncidenceDataModel(ABC):
     """Abstract base class for data parsers."""
 
     def __init__(self, source_config, population=None):
