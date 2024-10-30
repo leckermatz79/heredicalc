@@ -26,4 +26,4 @@ class PenetranceModelFactory:
             logging.debug("Creating UniformPenetranceModel instance.")
             return UniformPenetranceModel(incidence_data, relative_risk_model, crhf_model)
         else:
-            raise ValueError(f"Unknown penetrance model type: {model_type}")
+            raise ValueError(f"Unknown penetrance model type: {model_type}")    

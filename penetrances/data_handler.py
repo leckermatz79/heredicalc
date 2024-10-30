@@ -2,7 +2,7 @@ import yaml
 import logging
 from datetime import datetime
 import argparse
-from V3.setup_logging import setup_logging
+from V3.core.setup_logging import setup_logging
 from V3.penetrances.crhf_models import CRHFModelFactory 
 
 def main():
