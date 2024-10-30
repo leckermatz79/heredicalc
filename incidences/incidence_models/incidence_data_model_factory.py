@@ -9,7 +9,7 @@ class IncidenceDataModelFactory:
 
     @staticmethod
     def create_incidence_model(source_config, population=None):
-        incidence_model_type = source_config.get("incidence_model")
+        incidence_model_type = source_config.get("parser")
         
         if incidence_model_type == "ci5_detailed_incidence_model":
             return CI5DetailedIncidenceModel(source_config, population)

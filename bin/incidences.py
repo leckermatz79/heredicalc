@@ -41,7 +41,7 @@ def main():
     data_handler.handle_data()
 
     # Load and process data
-    data_parser = IncidenceDataModelFactory.create_parser(source_config, population=args.population)
+    data_parser = IncidenceDataModelFactory.create_incidence_model(source_config, population=args.population)
     df = data_parser.parse_data()
     logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
 
