@@ -10,6 +10,8 @@ setup(
             'penetrances=V3.penetrances.data_handler:main', # penetrances data handler
             'incidences=V3.bin.incidences:main', # incidences data handler
             'cumulative_risks=V3.bin.cumulative_risks:main', # cumulative risks data handler
+            'relative_risks=V3.bin.relative_risks:main', # cumulative risks data handler
+            'crhf=V3.bin.crhf:main', # cumulative risks data handler
             'main-script=V3.main:main',  # main program
         ],
     },

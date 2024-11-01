@@ -1,4 +1,4 @@
-# V3/penetrances/relative_risk_models.py
+# V3/penetrances/relative_risks/relative_risk_model.py
 from abc import ABC, abstractmethod
 import logging
 import pandas as pd
@@ -24,16 +24,3 @@ class RelativeRiskModel(ABC):
         """
         pass
     
-class RelativeRiskModelFactory:
-    """
-    Factory class to create a RelativeRiskModel instance based on the model type.
-    """
-
-    @staticmethod
-    def create_relative_risk_model(model_type, **kwargs):
-        if model_type == "static":
-            return StaticLookupRRModel()
-        # elif model_type == "normal_distribution":
-        #     return NormalDistributionRiskModel(**kwargs)
-        else:
-            raise ValueError(f"Unsupported relative risk model type: {model_type}")

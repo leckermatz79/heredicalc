@@ -1,5 +1,7 @@
 [console_scripts]
+crhf = V3.bin.crhf:main
 cumulative_risks = V3.bin.cumulative_risks:main
 incidences = V3.bin.incidences:main
 main-script = V3.main:main
 penetrances = V3.penetrances.data_handler:main
+relative_risks = V3.bin.relative_risks:main

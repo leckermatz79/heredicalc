@@ -1,8 +1,8 @@
-# V3/penetrances/relative_risk/static_lookup_rr_model.py
+# V3/penetrances/relative_risks/static_lookup_rr_model.py
 import pandas as pd
 import os
 import logging
-from V3.penetrances.relative_risk.relative_risk_models import RelativeRiskModel
+from V3.penetrances.relative_risks.relative_risk_model import RelativeRiskModel
 
 class StaticLookupRRModel(RelativeRiskModel):
     """
