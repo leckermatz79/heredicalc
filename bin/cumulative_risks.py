@@ -67,7 +67,7 @@ def main():
         for age_upper in sorted(df['age_class_upper'].unique()):
             #print ("age_upper: ", age_upper)
             if pd.isna(age_upper):
-                logging.info(f"Skipping age class with undefined span for CR calculation.")
+                logging.info(f"Skipping age classes with undefined span for CR calculation.")
                 continue
             age_row = df[(df['age_class_upper'] == age_upper) & (df['gender'] == gender)].iloc[0]
             age_lower = age_row['age_class_lower']

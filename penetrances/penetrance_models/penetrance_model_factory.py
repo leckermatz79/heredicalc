@@ -1,6 +1,7 @@
-# V3/penetrances/penetrance_model_factory.py
+# V3/penetrances/penetrance_models/penetrance_model_factory.py
 import logging
-from V3.penetrances.penetrance_models import UniformPenetranceModel
+from .penetrance_models import PenetranceModel
+from .penetrance_models import UniformPenetranceModel
 from V3.penetrances.relative_risk.relative_risk_models import RelativeRiskModel
 from V3.penetrances.crhf_models import CRHFModel
 
