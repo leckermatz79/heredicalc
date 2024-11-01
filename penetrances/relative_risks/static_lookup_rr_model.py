@@ -1,6 +1,7 @@
 # V3/penetrances/relative_risks/static_lookup_rr_model.py
-import pandas as pd
+
 import os
+import pandas as pd
 import logging
 from V3.penetrances.relative_risks.relative_risk_model import RelativeRiskModel
 
@@ -12,7 +13,7 @@ class StaticLookupRRModel(RelativeRiskModel):
     relative risk values based on age, phenotype, and gender.
     """
 
-    def __init__(self, gene, data_dir=None):
+    def __init__(self, gene: str, data_dir: str = None):
         """
         Initialize the StaticLookupRRModel with a specific gene and data directory.
         
@@ -20,15 +21,17 @@ class StaticLookupRRModel(RelativeRiskModel):
             gene (str): The gene symbol to load relative risk data for (e.g., "BRCA1").
             data_dir (str): Path to the directory containing relative risk CSV files.
         """
-        # Define the default path based on the file location
+        # Define the default path based on the file location if none provided
         if data_dir is None:
-            data_dir = os.path.join(os.path.dirname(__file__), "..", "..", "data_sources", "relative_risks", "static_lookup_tables")
+            data_dir = os.path.join(
+                os.path.dirname(__file__), "..", "..", "data_sources", "relative_risks", "static_lookup_tables"
+            )
 
         self.gene = gene
         self.data_dir = data_dir
         self.lookup_table = self._load_lookup_table()
 
-    def _load_lookup_table(self):
+    def _load_lookup_table(self) -> pd.DataFrame:
         """
         Load the relative risk lookup table for the specified gene from a CSV file.
         
@@ -37,6 +40,7 @@ class StaticLookupRRModel(RelativeRiskModel):
         
         Raises:
             FileNotFoundError: If the file for the gene does not exist.
+            ValueError: If required columns are missing in the CSV.
         """
         file_path = os.path.join(self.data_dir, f"{self.gene}.csv")
         if not os.path.isfile(file_path):
@@ -50,10 +54,11 @@ class StaticLookupRRModel(RelativeRiskModel):
         # Validate columns are as expected
         required_columns = {"gender", "age_from", "age_to", "phenotype", "heterozygous_rr", "homozygous_rr"}
         if not required_columns.issubset(df.columns):
-            raise ValueError(f"CSV file for {self.gene} is missing required columns: {required_columns - set(df.columns)}")
+            missing_columns = required_columns - set(df.columns)
+            raise ValueError(f"CSV file for {self.gene} is missing required columns: {missing_columns}")
         return df
 
-    def get_relative_risk(self, age, phenotype, gender):
+    def get_relative_risk(self, age: int, phenotype: str, gender: str) -> tuple:
         """
         Get the relative risk for a given age, phenotype, and gender.
         
@@ -65,7 +70,7 @@ class StaticLookupRRModel(RelativeRiskModel):
         Returns:
             tuple: (heterozygous_risk, homozygous_risk) for the given parameters.
         """
-        # Filter the lookup table by phenotype and gender
+        # Filter the lookup table by phenotype, gender, and age range
         filtered_df = self.lookup_table[
             (self.lookup_table["phenotype"] == phenotype) &
             (self.lookup_table["gender"] == gender) &
@@ -77,11 +82,13 @@ class StaticLookupRRModel(RelativeRiskModel):
             logging.warning(f"No relative risk data found for {self.gene} with age={age}, phenotype={phenotype}, gender={gender}")
             return None, None
         
-        # Retrieve the risks for the first matched row (assuming non-overlapping ranges)
+        # Retrieve the risks for the first matched row
         heterozygous_risk = filtered_df.iloc[0]["heterozygous_rr"]
         homozygous_risk = filtered_df.iloc[0]["homozygous_rr"]
 
-        logging.info(f"Retrieved RR for {self.gene}, age={age}, phenotype={phenotype}, gender={gender}: "
-                     f"Heterozygous={heterozygous_risk}, Homozygous={homozygous_risk}")
+        logging.info(
+            f"Retrieved RR for {self.gene}, age={age}, phenotype={phenotype}, gender={gender}: "
+            f"Heterozygous={heterozygous_risk}, Homozygous={homozygous_risk}"
+        )
         
         return heterozygous_risk, homozygous_risk

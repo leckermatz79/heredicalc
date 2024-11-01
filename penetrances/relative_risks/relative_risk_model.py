@@ -1,26 +1,29 @@
 # V3/penetrances/relative_risks/relative_risk_model.py
 from abc import ABC, abstractmethod
-import logging
-import pandas as pd
-import os
+from typing import Tuple
 
 class RelativeRiskModel(ABC):
     """
-    Abstract base class for calculating relative risks based on age, phenotype, and gender.
+    Abstract base class for relative risk models.
+    
+    This class defines the interface for calculating relative risks based on age,
+    phenotype, and gender for specific genes.
     """
 
     @abstractmethod
-    def get_relative_risk(self, age, phenotype, gender):
+    def get_relative_risk(self, age: int, phenotype: str, gender: str) -> Tuple[float, float]:
         """
-        Abstract method to get relative risk based on age, phenotype, and gender.
+        Calculate the relative risk for a given age, phenotype, and gender.
         
         Parameters:
-            age (int): The specific age.
-            phenotype (str): Phenotype (e.g., "BreastCancer", "LungCancer").
-            gender (str): Gender (e.g., "M" or "F").
+            age (int): Age of the individual.
+            phenotype (str): The phenotype of interest (e.g., "BreastCancer").
+            gender (str): Gender of the individual ("M" or "F").
         
         Returns:
-            tuple: (heterozygous_risk, homozygous_risk) relative risk values.
+            Tuple[float, float]: A tuple containing the heterozygous and homozygous risk values.
+        
+        Raises:
+            NotImplementedError: If this method is not implemented in a subclass.
         """
-        pass
-    
+        raise NotImplementedError("Subclasses must implement this method.")
