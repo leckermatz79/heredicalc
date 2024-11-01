@@ -8,7 +8,7 @@ import yaml
 from V3.core.setup_logging import setup_logging
 from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
-from V3.cumulative_risks.cumulative_risk_model_factory import CumulativeRiskModelFactory
+from V3.cumulative_risk_models.cumulative_risk_model_factory import CumulativeRiskModelFactory
 
 import sys 
 

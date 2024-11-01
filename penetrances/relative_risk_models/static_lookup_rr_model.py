@@ -3,7 +3,7 @@
 import os
 import pandas as pd
 import logging
-from V3.penetrances.relative_risks.relative_risk_model import RelativeRiskModel
+from V3.penetrances.relative_risk_models.relative_risk_model import RelativeRiskModel
 
 class StaticLookupRRModel(RelativeRiskModel):
     """

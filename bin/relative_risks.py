@@ -7,7 +7,7 @@ import yaml
 from V3.core.setup_logging import setup_logging
 from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
-from V3.penetrances.relative_risks.relative_risk_model_factory import RelativeRiskModelFactory
+from V3.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Calculate relative risks for specified phenotypes.")

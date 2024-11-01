@@ -28,9 +28,11 @@ penetrances/crhf_models/constant_crhf_model.py
 penetrances/crhf_models/crhf_model.py
 penetrances/crhf_models/crhf_model_factory.py
 penetrances/penetrance_models/__init__.py
+penetrances/penetrance_models/dummy_penetrance_model.py
+penetrances/penetrance_models/penetrance_model.py
 penetrances/penetrance_models/penetrance_model_factory.py
-penetrances/penetrance_models/penetrance_models.py
 penetrances/penetrance_models/uniform_penetrance_model.py
-penetrances/relative_risk/__init__.py
-penetrances/relative_risk/relative_risk_models.py
-penetrances/relative_risk/static_lookup_rr_model.py
+penetrances/relative_risk_models/__init__.py
+penetrances/relative_risk_models/relative_risk_model.py
+penetrances/relative_risk_models/relative_risk_model_factory.py
+penetrances/relative_risk_models/static_lookup_rr_model.py

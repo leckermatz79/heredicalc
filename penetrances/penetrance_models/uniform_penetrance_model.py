@@ -1,8 +1,8 @@
-# V3/penetrances/penetrance_models/penetrance_models.py
+# V3/penetrances/penetrance_models/uniform_penetrance_model.py
 import logging
-from .penetrance_models import PenetranceModel
-from V3.penetrances.relative_risk.relative_risk_models import RelativeRiskModel
-from V3.penetrances.crhf_models import CRHFModel
+from V3.penetrances.penetrance_models.penetrance_model import PenetranceModel
+from V3.penetrances.relative_risk_models.relative_risk_model import RelativeRiskModel
+from V3.penetrances.crhf_models.crhf_model import CRHFModel
 import pandas as pd
 
 class UniformPenetranceModel(PenetranceModel):

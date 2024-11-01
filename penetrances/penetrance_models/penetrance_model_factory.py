@@ -1,16 +1,18 @@
 # V3/penetrances/penetrance_models/penetrance_model_factory.py
 import logging
-from .penetrance_models import PenetranceModel
-from .penetrance_models import UniformPenetranceModel
-from V3.penetrances.relative_risk.relative_risk_models import RelativeRiskModel
-from V3.penetrances.crhf_models import CRHFModel
+from V3.penetrances.penetrance_models.penetrance_model import PenetranceModel
+from V3.penetrances.penetrance_models.uniform_penetrance_model import UniformPenetranceModel
+from V3.penetrances.penetrance_models.dummy_penetrance_model import DummyPenetranceModel
+from V3.penetrances.relative_risk_models.relative_risk_model import RelativeRiskModel
+from V3.cumulative_risk_models.cumulative_risk_model import CumulativeRiskModel
+from V3.penetrances.crhf_models.crhf_model import CRHFModel
 
 class PenetranceModelFactory:
     """
     Factory class to create different penetrance models.
     """
     @staticmethod
-    def create_penetrance_model(model_type, incidence_data, relative_risk_model: RelativeRiskModel, crhf_model: CRHFModel):
+    def create_model(model_type, gene, incidence_data, crhf_model: CRHFModel, relative_risk_model: RelativeRiskModel, cumulative_risk_model: CumulativeRiskModel):
         """
         Create a penetrance model based on the specified type.
 
@@ -26,5 +28,8 @@ class PenetranceModelFactory:
         if model_type == "uniform":
             logging.debug("Creating UniformPenetranceModel instance.")
             return UniformPenetranceModel(incidence_data, relative_risk_model, crhf_model)
+        elif model_type == "dummy":
+            logging.debug("Creating DummyPenetranceModel instance.")
+            return DummyPenetranceModel(incidence_data, relative_risk_model, crhf_model)
         else:
             raise ValueError(f"Unknown penetrance model type: {model_type}")    

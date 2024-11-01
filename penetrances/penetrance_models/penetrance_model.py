@@ -1,8 +1,8 @@
-# V3/penetrances/penetrance_models/penetrance_models.py
+# V3/penetrances/penetrance_models/penetrance_model.py
 import logging
 from abc import ABC, abstractmethod
-from V3.penetrances.relative_risk.relative_risk_models import RelativeRiskModel
-from V3.penetrances.crhf_models import CRHFModel
+from V3.penetrances.relative_risk_models.relative_risk_model import RelativeRiskModel
+from V3.penetrances.crhf_models.crhf_model import CRHFModel
 import pandas as pd
 
 

@@ -1,9 +1,9 @@
 # V3/cumulative_risks/cumulative_risk_model_factory.py
 
 import logging
-from V3.cumulative_risks.cumulative_risk_model import CumulativeRiskModel
-from V3.cumulative_risks.simple_cumulative_risk_model import SimpleCumulativeRiskModel
-from incidences.incidence_models import incidence_data_model
+from V3.cumulative_risk_models.cumulative_risk_model import CumulativeRiskModel
+from V3.cumulative_risk_models.simple_cumulative_risk_model import SimpleCumulativeRiskModel
+from V3.incidences.incidence_models import incidence_data_model
 # Import other specific models here as they are implemented
 
 class CumulativeRiskModelFactory:

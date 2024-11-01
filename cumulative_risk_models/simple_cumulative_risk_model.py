@@ -3,7 +3,7 @@
 import logging
 import numpy as np
 import pandas as pd
-from V3.cumulative_risks.cumulative_risk_model import CumulativeRiskModel
+from V3.cumulative_risk_models.cumulative_risk_model import CumulativeRiskModel
 
 class SimpleCumulativeRiskModel(CumulativeRiskModel):
     """
