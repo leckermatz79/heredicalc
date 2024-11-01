@@ -2,6 +2,7 @@
 import logging
 from V3.penetrances.penetrance_models.penetrance_model import PenetranceModel
 from V3.penetrances.penetrance_models.uniform_penetrance_model import UniformPenetranceModel
+from V3.penetrances.penetrance_models.uniform_survival_penetrance_model import UniformSurvivalPenetranceModel
 from V3.penetrances.penetrance_models.dummy_penetrance_model import DummyPenetranceModel
 from V3.penetrances.relative_risk_models.relative_risk_model import RelativeRiskModel
 from V3.cumulative_risk_models.cumulative_risk_model import CumulativeRiskModel
@@ -28,6 +29,9 @@ class PenetranceModelFactory:
         if model_type == "uniform":
             logging.debug("Creating UniformPenetranceModel instance.")
             return UniformPenetranceModel(incidence_data, relative_risk_model, crhf_model)
+        elif model_type == "uniform_survival":
+            logging.debug("Creating UniformSurvivalPenetranceModel instance.")
+            return UniformSurvivalPenetranceModel(incidence_data, relative_risk_model, crhf_model)
         elif model_type == "dummy":
             logging.debug("Creating DummyPenetranceModel instance.")
             return DummyPenetranceModel(incidence_data, relative_risk_model, crhf_model)
