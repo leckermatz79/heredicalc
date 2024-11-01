@@ -1,4 +1,5 @@
 # V3/bin/cumulative_risks.py
+from math import nan
 import os
 import logging
 import argparse
@@ -8,6 +9,8 @@ from V3.core.setup_logging import setup_logging
 from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
 from V3.cumulative_risks.cumulative_risk_model_factory import CumulativeRiskModelFactory
+
+import sys 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Calculate cumulative risks for specified phenotypes.")
@@ -60,18 +63,20 @@ def main():
 
     # Loop through genders and unique age classes to calculate cumulative risks
     for gender in df['gender'].unique():
+        #print ("gender: ", gender)
         for age_upper in sorted(df['age_class_upper'].unique()):
-            age_row = df[df['age_class_upper'] == age_upper].iloc[0]
+            #print ("age_upper: ", age_upper)
+            if pd.isna(age_upper):
+                logging.info(f"Skipping age class with undefined span for CR calculation.")
+                continue
+            age_row = df[(df['age_class_upper'] == age_upper) & (df['gender'] == gender)].iloc[0]
             age_lower = age_row['age_class_lower']
             age_span = age_row['age_span']
-
-            # Calculate cumulative risk for specified parameters
             cumulative_risk = cumulative_risk_model.calculate_cumulative_risk(
                 gender=gender,
                 age_class_upper=age_upper,
                 phenotypes=args.phenotypes
             )
-
             # Append the results to the list as a dictionary
             cumulative_risks.append({
                 'gender': gender,

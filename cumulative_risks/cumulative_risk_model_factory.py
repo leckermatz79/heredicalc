@@ -12,7 +12,15 @@ class CumulativeRiskModelFactory:
     
     Provides an interface to create various cumulative risk models based on a specified model type.
     """
-    
+    def __init__(self, data_frame):
+        """
+        Initializes the cumulative risk model with incidence data.
+
+        Parameters:
+            data_frame (pd.DataFrame): DataFrame containing incidence data (e.g., rates, age spans, etc.)
+        """
+        self.data_frame = data_frame
+
     @staticmethod
     def create_model(model_type, incidence_data):
         """

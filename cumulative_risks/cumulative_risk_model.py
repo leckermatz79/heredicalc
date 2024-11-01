@@ -15,11 +15,11 @@ class CumulativeRiskModel(ABC):
         incidence_data (pd.DataFrame): DataFrame with incidence rates, age spans, and other relevant columns.
     """
     
-    def __init__(self, incidence_data):
-        if not isinstance(incidence_data, pd.DataFrame):
+    def __init__(self, data_frame):
+        if not isinstance(data_frame, pd.DataFrame):
             raise TypeError("Incidence data must be a pandas DataFrame.")
         
-        self.incidence_data = incidence_data
+        self.data_frame = data_frame
 
     @abstractmethod
     def calculate_cumulative_risk(self):
@@ -44,7 +44,7 @@ class CumulativeRiskModel(ABC):
             ValueError: If required columns are missing in the incidence data.
         """
         required_columns = {'age_span', 'incidence_rate', 'phenotype', 'gender'}
-        missing_columns = required_columns - set(self.incidence_data.columns)
+        missing_columns = required_columns - set(self.data_frame.columns)
         if missing_columns:
             raise ValueError(f"Missing columns in incidence data: {', '.join(missing_columns)}")
         

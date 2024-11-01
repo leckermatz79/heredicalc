@@ -9,6 +9,13 @@ class SimpleCumulativeRiskModel(CumulativeRiskModel):
     """
     A simple cumulative risk model under the assumption of independent phenotypes.
     """
+
+    def __init(self, data_frame):
+        """
+        Initializes the SimpleCumulativeRiskModel with the incidence data.
+        """
+        super().__init__(data_frame)
+    
     def calculate_cumulative_risk(self, gender, age_class_upper, phenotypes):
         """
         Calculate cumulative risk for a given gender, age upper limit, and selected phenotypes.
@@ -26,7 +33,7 @@ class SimpleCumulativeRiskModel(CumulativeRiskModel):
             (self.data_frame['gender'] == gender) &
             (self.data_frame['phenotype'].isin(phenotypes)) &
             (self.data_frame['age_class_upper'] <= age_class_upper)
-        ]
+        ].copy()
 
         # Calculate cumulative risk for the filtered subset
         return self._calculate_risk_for_subset(relevant_data)
@@ -46,7 +53,7 @@ class SimpleCumulativeRiskModel(CumulativeRiskModel):
             raise ValueError("Data frame must contain 'incidence_rate' and 'age_span' columns.")
 
         # Sum the contributions of each age-phenotype combination
-        subset_df['risk_contribution'] = subset_df['incidence_rate'] * subset_df['age_span']
+        subset_df.loc[:, 'risk_contribution'] = subset_df['incidence_rate'] * subset_df['age_span']
         total_risk_contribution = subset_df['risk_contribution'].sum()
 
         # Calculate cumulative risk
