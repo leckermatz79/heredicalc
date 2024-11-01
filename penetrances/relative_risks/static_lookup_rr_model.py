@@ -13,7 +13,7 @@ class StaticLookupRRModel(RelativeRiskModel):
     relative risk values based on age, phenotype, and gender.
     """
 
-    def __init__(self, gene: str, data_dir: str = None):
+    def __init__(self, gene: str, data_frame: pd.DataFrame, data_dir: str = None):
         """
         Initialize the StaticLookupRRModel with a specific gene and data directory.
         
@@ -24,11 +24,12 @@ class StaticLookupRRModel(RelativeRiskModel):
         # Define the default path based on the file location if none provided
         if data_dir is None:
             data_dir = os.path.join(
-                os.path.dirname(__file__), "..", "..", "data_sources", "relative_risks", "static_lookup_tables"
+                os.path.dirname(__file__), "..", "..", "data_sources", "penetrances", "relative_risks", "static_lookup_tables"
             )
 
         self.gene = gene
         self.data_dir = data_dir
+        self.data_frame = data_frame
         self.lookup_table = self._load_lookup_table()
 
     def _load_lookup_table(self) -> pd.DataFrame:
@@ -58,7 +59,7 @@ class StaticLookupRRModel(RelativeRiskModel):
             raise ValueError(f"CSV file for {self.gene} is missing required columns: {missing_columns}")
         return df
 
-    def get_relative_risk(self, age: int, phenotype: str, gender: str) -> tuple:
+    def calculate_relative_risk(self, age: int, phenotype: str, gender: str) -> tuple:
         """
         Get the relative risk for a given age, phenotype, and gender.
         
@@ -80,7 +81,7 @@ class StaticLookupRRModel(RelativeRiskModel):
 
         if filtered_df.empty:
             logging.warning(f"No relative risk data found for {self.gene} with age={age}, phenotype={phenotype}, gender={gender}")
-            return None, None
+            return 1.0, 1.0
         
         # Retrieve the risks for the first matched row
         heterozygous_risk = filtered_df.iloc[0]["heterozygous_rr"]

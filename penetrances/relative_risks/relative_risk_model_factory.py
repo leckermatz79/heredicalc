@@ -10,7 +10,7 @@ class RelativeRiskModelFactory:
     """
     
     @staticmethod
-    def create_model(model_type, gene):
+    def create_model(model_type, gene=None, data_frame=None, rr_file_path=None):
         """
         Create a relative risk model based on the specified model type.
         
@@ -26,6 +26,6 @@ class RelativeRiskModelFactory:
         """
         if model_type == "static_lookup":
             logging.debug(f"Creating StaticLookupRRModel instance for gene '{gene}'.")
-            return StaticLookupRRModel(gene)
+            return StaticLookupRRModel(gene, data_frame, rr_file_path)
         else:
             raise ValueError(f"Unknown relative risk model type: {model_type}")

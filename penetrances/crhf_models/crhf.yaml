@@ -1,4 +1,5 @@
 # V3/penetrances/crhf_models/crhf_values.yaml
+# This file is DEPRECATED, not used anymore and marked for DELETION.
 # This file hold data for CRHF values for various genes. 
 # It is possible to model CRHF values along various parameters, but these features have not been implemented yet (due to lack of time and data). 
 # The "constant" model assumes a constant frequenca in the general population independent of population, age and gender. 

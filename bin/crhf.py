@@ -1,35 +1,92 @@
 # V3/bin/crhf.py
+
+import os
 import argparse
 import logging
+import pandas as pd
+import yaml
 from V3.core.setup_logging import setup_logging
+from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
+from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
+from V3.cumulative_risks.cumulative_risk_model_factory import CumulativeRiskModelFactory
 from V3.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Retrieve CRHF values for a specified gene.")
-    parser.add_argument("--crhftype", required=True, help="Specify the CRHF model to use (e.g., 'constant').")
-    parser.add_argument("--gene", required=True, help="Specify the gene symbol to retrieve CRHF (e.g., 'BRCA1').")
+    parser = argparse.ArgumentParser(description="Calculate CRHF values for a specific gene.")
+    parser.add_argument("--dataset", required=True, help="Specify the dataset (e.g., ci5_ix)")
+    parser.add_argument("--population", help="Specify the population by key number (e.g., 38402499)")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
-                        help="Set the logging level.")
-    return parser.parse_args()
+                        help="Set the logging level")
+    parser.add_argument("--force-download", action="store_true", help="Force data re-download")
+    parser.add_argument("--phenotypes", nargs='+', required=True,
+                        help="Specify phenotypes to include (e.g., BreastCancer OvarianCancer).")
+    parser.add_argument("--gene", required=True, help="Specify the gene for CRHF calculation (e.g., BRCA1)")
+    parser.add_argument("--crhftype", default="constant", help="Specify the CRHF model type to use (default: constant)")
+    args = parser.parse_args()
+    args.phenotypes = list(set(args.phenotypes))  # Remove duplicates
+    return args
 
+def load_sources():
+    """Loads the sources.yaml file and returns its contents."""
+    sources_path = os.path.join(os.path.dirname(__file__), "../data_sources/incidences/sources.yaml")
+    with open(sources_path, "r") as f:
+        return yaml.safe_load(f)
+    
 def main():
     args = parse_arguments()
     setup_logging(args.log_level)
+    
+    # Load dataset configuration
+    sources = load_sources()["sources"]
+    if args.dataset not in sources:
+        logging.error(f"Dataset '{args.dataset}' not found in sources.yaml.")
+        return
 
-    try:
-        # Instantiate the CRHF model via factory
-        crhf_model = CRHFModelFactory.create_model(args.crhftype)
-        # Retrieve CRHF for the specified gene
-        crhf_value = crhf_model.get_crhf(args.gene)
+    source_config = sources[args.dataset]
+    data_handler = DataSourceHandlerFactory.create_data_source_handler(source_config, force_download=args.force_download)
+    data_handler.handle_data()
 
-        if crhf_value is not None:
-            print(f"CRHF for {args.gene} using '{args.crhftype}' model: {crhf_value}")
-        else:
-            print(f"CRHF value for gene '{args.gene}' not found in '{args.crhftype}' model.")
-            logging.warning(f"CRHF value for gene '{args.gene}' not found in model '{args.crhftype}'.")
+    # Load and process incidence data
+    data_parser = IncidenceDataModelFactory.create_incidence_model(source_config, population=args.population)
+    df = data_parser.parse_data()
+    df = data_parser.filter_by_phenotypes(df, args.phenotypes)
+    df = data_parser.build_incidence_table(df)
+    df = data_parser.add_age_span_column(df)
+    df = data_parser.add_incidence_rate_column()
+    logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
 
-    except Exception as e:
-        logging.error(f"Error retrieving CRHF value: {e}")
+    # Initialize CRHF model
+    crhf_model = CRHFModelFactory.create_model(args.crhftype, args.gene, df)
+
+    # Define an empty list to store CRHF results
+    crhf_results = []
+
+    # Calculate CRHF values for each gender and age class
+    for gender in df['gender'].unique():
+        for age_upper in sorted(df['age_class_upper'].unique()):
+            if pd.isna(age_upper):
+                logging.info(f"Skipping age classes with undefined span for CRHF calculation.")
+                continue
+            age_row = df[(df['age_class_upper'] == age_upper) & (df['gender'] == gender)].iloc[0]
+            age_lower = age_row['age_class_lower']
+            age_span = age_row['age_span']
+            
+            # Calculate CRHF for the given parameters
+            crhf_value = crhf_model.calculate_crhf(gender, age_upper)
+
+            # Append the results to the list as a dictionary
+            crhf_results.append({
+                'gene': args.gene,
+                'gender': gender,
+                'age_class_lower': age_lower,
+                'age_class_upper': age_upper,
+                'age_span': age_span,
+                'crhf_value': crhf_value
+            })
+
+    # Convert results to a DataFrame and output
+    crhf_df = pd.DataFrame(crhf_results)
+    print(crhf_df)
 
 if __name__ == "__main__":
     main()

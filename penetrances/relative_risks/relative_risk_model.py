@@ -11,7 +11,7 @@ class RelativeRiskModel(ABC):
     """
 
     @abstractmethod
-    def get_relative_risk(self, age: int, phenotype: str, gender: str) -> Tuple[float, float]:
+    def calculate_relative_risk(self, age: int, phenotype: str, gender: str) -> Tuple[float, float]:
         """
         Calculate the relative risk for a given age, phenotype, and gender.
         

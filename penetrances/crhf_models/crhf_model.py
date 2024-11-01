@@ -1,27 +1,38 @@
 # V3/penetrances/crhf_models/crhf_model.py
-import yaml
-import os
-import logging
+
 from abc import ABC, abstractmethod
 
 class CRHFModel(ABC):
     """
     Abstract base class for CRHF models.
     
-    Subclasses must implement the `get_crhf` method to calculate 
-    the CRHF (carrier risk heterozygous frequency) for a specific gene.
+    Subclasses must implement the `calculate_crhf` method to retrieve
+    the CRHF (carrier risk heterozygous frequency) for a specific gene,
+    given certain parameters like gender and age class.
     """
     
-    @abstractmethod
-    def get_crhf(self, gene):
+    def __init__(self, gene, data_frame):
         """
-        Retrieve the CRHF for a given gene.
+        Initialize the CRHFModel with gene and data frame.
         
         Parameters:
-            gene (str): Gene symbol for which to get the CRHF.
+            gene (str): Gene symbol for which to calculate CRHF.
+            data_frame (pd.DataFrame): Data containing information such as phenotype, age, and gender.
+        """
+        self.gene = gene
+        self.data_frame = data_frame
+
+    @abstractmethod
+    def calculate_crhf(self, gender, age_class_upper):
+        """
+        Retrieve the CRHF for a given gene, gender, and age class.
+        
+        Parameters:
+            gender (str): Gender of the individual ("M" or "F").
+            age_class_upper (float): Upper age limit for the age class.
         
         Returns:
-            float: The CRHF value.
+            float: The calculated CRHF value.
         
         Raises:
             NotImplementedError: If subclass does not implement this method.
