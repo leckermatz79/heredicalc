@@ -48,6 +48,8 @@ def main():
     # Filter and build incidence table
     df = data_parser.filter_by_phenotypes(df, args.phenotypes)
     incidence_table = data_parser.build_incidence_table(df)
+    incidence_table = data_parser.add_incidence_rate_column()
+    incidence_table = data_parser.add_age_span_column(incidence_table) 
     print(incidence_table)
 
 if __name__ == "__main__":

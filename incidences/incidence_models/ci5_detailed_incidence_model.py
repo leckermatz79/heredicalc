@@ -72,8 +72,23 @@ class CI5DetailedIncidenceModel(IncidenceDataModel):
 
         # Reorder columns as specified
         incidence_table = incidence_table[["gender", "phenotype", "age_class_lower", "age_class_upper", "cases", "person_years"]]
-
+        self.data_frame = incidence_table
+        
         return incidence_table
+    
+    def add_incidence_rate_column(self):
+        """
+        Add an incidence rate column to the incidence DataFrame.
+        
+        Returns:
+            pd.DataFrame: Updated DataFrame with an 'incidence_rate' column.
+        """
+        self.data_frame['incidence_rate'] = self.data_frame.apply(
+            lambda row: self.calculate_incidence_rate(row['cases'], row['person_years']),
+            axis=1
+        )
+        logging.info("Incidence rate column added to the DataFrame.")
+        return self.data_frame
 
     def get_age_range(self, age_class_id):
         """Return the age range (lower, upper) for a given age class ID based on sources.yaml."""

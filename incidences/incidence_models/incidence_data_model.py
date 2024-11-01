@@ -11,11 +11,35 @@ class IncidenceDataModel(ABC):
     def __init__(self, source_config, population=None):
         self.source_config = source_config
         self.population = population or source_config.get("default_population")
-        self.data_dir = os.path.join(os.path.dirname(__file__),"..", "data", source_config["data_dir"])
+        self.base_data_dir = os.path.join(os.path.dirname(__file__), "../../data_sources/incidences")
+        self.data_dir = os.path.join(self.base_data_dir, source_config["data_dir"])
         self.phenotype_mappings = source_config.get("phenotype_mappings", {})
         self.column_mappings = self.source_config.get("column_mappings", {})
         self.gender_mapping = self.source_config.get("gender_mapping", {})
 
+    def calculate_incidence_rate(self, cases, person_years):
+        """
+        Calculate the incidence rate for given cases and person-years.
+
+        Parameters:
+            cases (int): Number of cases observed.
+            person_years (int): Observed person-years.
+
+        Returns:
+            float: Calculated incidence rate (lambda).
+        """
+        try:
+            if person_years > 0:
+                incidence_rate = cases / person_years
+                logging.debug(f"Calculated incidence rate: {incidence_rate} for cases: {cases}, person-years: {person_years}")
+                return incidence_rate
+            else:
+                logging.warning("Person-years must be greater than zero for incidence rate calculation.")
+                return 0.0
+        except Exception as e:
+            logging.error(f"Error calculating incidence rate: {e}")
+            return None
+        
     def get_column(self, column_name, df):
         """
         Retrieve the column from the DataFrame based on the specified column mappings.
@@ -74,6 +98,26 @@ class IncidenceDataModel(ABC):
 
         logging.info(f"Using data file: {file_path}")
         return file_path
+
+    def  add_age_span_column(self, data_frame):
+        """
+        Default implementation to add an 'age_span' column to the DataFrame.
+        
+        Parameters:
+            data_frame (pd.DataFrame): The incidence data DataFrame.
+        
+        Returns:
+            pd.DataFrame: Updated DataFrame with an 'age_span' column.
+        """
+        if 'age_class_lower' in data_frame.columns and 'age_class_upper' in data_frame.columns:
+            data_frame['age_span'] = data_frame.apply(
+                lambda row: (row['age_class_upper'] - row['age_class_lower'])+1 if pd.notnull(row['age_class_upper']) else "open-ended",
+                axis=1
+            )
+            logging.info("Default age span column added.")
+        else:
+            logging.warning("Age group columns not found; skipping age span calculation.")
+        return data_frame
 
     @abstractmethod
     def parse_data(self, df):

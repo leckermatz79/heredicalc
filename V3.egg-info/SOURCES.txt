@@ -6,6 +6,10 @@ V3.egg-info/entry_points.txt
 V3.egg-info/top_level.txt
 core/__init__.py
 core/setup_logging.py
+cumulative_risks/__init__.py
+cumulative_risks/cumulative_risk_model.py
+cumulative_risks/cumulative_risk_model_factory.py
+cumulative_risks/simple_cumulative_risk_model.py
 incidences/__init__.py
 incidences/incidence_data_source_handlers/__init__.py
 incidences/incidence_data_source_handlers/csv_handler.py
@@ -27,6 +31,7 @@ penetrances/crhf_models/__init__.py
 penetrances/crhf_models/constant_crhf_model.py
 penetrances/crhf_models/crhf_model.py
 penetrances/crhf_models/crhf_model_factory.py
+penetrances/penetrance_models/__init__.py
 penetrances/relative_risk/__init__.py
 penetrances/relative_risk/relative_risk_models.py
 penetrances/relative_risk/static_lookup_rr_model.py
