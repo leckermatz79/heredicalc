@@ -81,7 +81,7 @@ class StaticLookupRRModel(RelativeRiskModel):
 
         if filtered_df.empty:
             logging.warning(f"No relative risk data found for {self.gene} with age={age}, phenotype={phenotype}, gender={gender}")
-            return 1.0, 1.0
+            return 0, 0
         
         # Retrieve the risks for the first matched row
         heterozygous_risk = filtered_df.iloc[0]["heterozygous_rr"]

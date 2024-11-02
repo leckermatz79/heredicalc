@@ -13,27 +13,29 @@ class PenetranceModelFactory:
     Factory class to create different penetrance models.
     """
     @staticmethod
-    def create_model(model_type, gene, incidence_data, crhf_model: CRHFModel, relative_risk_model: RelativeRiskModel, cumulative_risk_model: CumulativeRiskModel):
+    def create_model(model_type, *args, **kwargs):
         """
         Create a penetrance model based on the specified type.
 
         Parameters:
-            model_type (str): The type of penetrance model (e.g., "uniform").
-            incidence_data (pd.DataFrame): Incidence data as a DataFrame.
-            relative_risk_model (RelativeRiskModel): The relative risk model instance.
-            crhf_model (CRHFModel): The CRHF model instance.
+            model_type (str): The type of penetrance model (e.g., "uniform_survival").
+            *args: Positional arguments to be passed to the model.
+            **kwargs: Keyword arguments to be passed to the model.
 
         Returns:
             PenetranceModel: An instance of a specific penetrance model.
+
+        Raises:
+            ValueError: If the specified model type is not supported.
         """
         if model_type == "uniform":
             logging.debug("Creating UniformPenetranceModel instance.")
-            return UniformPenetranceModel(incidence_data, relative_risk_model, crhf_model)
+            return UniformPenetranceModel(*args, **kwargs)
         elif model_type == "uniform_survival":
             logging.debug("Creating UniformSurvivalPenetranceModel instance.")
-            return UniformSurvivalPenetranceModel(incidence_data, relative_risk_model, crhf_model)
+            return UniformSurvivalPenetranceModel(*args, **kwargs)
         elif model_type == "dummy":
             logging.debug("Creating DummyPenetranceModel instance.")
-            return DummyPenetranceModel(incidence_data, relative_risk_model, crhf_model)
+            return DummyPenetranceModel(*args, **kwargs)
         else:
             raise ValueError(f"Unknown penetrance model type: {model_type}")    

@@ -10,14 +10,11 @@ class PenetranceModel(ABC):
     """
     Abstract base class for calculating penetrance.
     """
-    def __init__(self, incidence_data, relative_risk_model: RelativeRiskModel, crhf_model: CRHFModel):
-        self.incidence_data = incidence_data
-        self.relative_risk_model = relative_risk_model
-        self.crhf_model = crhf_model
-        logging.debug("Initialized PenetranceModel with incidence data and models.")
+    def __init__(self, *args, **kwargs):
+        pass
 
     @abstractmethod
-    def calculate_penetrance(self, gene, phenotype):
+    def calculate_penetrance(self, *args, **kwargs):
         """
         Abstract method to calculate penetrance for a given gene and phenotype.
         
