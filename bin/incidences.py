@@ -6,6 +6,7 @@ from V3.core.setup_logging import setup_logging
 from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
 import yaml
+import pandas as pd
 
 def load_sources():
     """Loads the sources.yaml file and returns its contents."""
@@ -50,6 +51,14 @@ def main():
     incidence_table = data_parser.build_incidence_table(df)
     incidence_table = data_parser.add_incidence_rate_column()
     incidence_table = data_parser.add_age_span_column(incidence_table) 
+    #pd.set_option('display.max_rows', None)
+    #pd.set_option('display.max_columns', None)
+    #df_filtered = incidence_table[
+    #    (incidence_table['gender'] == 'F') &
+    #    (incidence_table['age_class_lower'] == 30.0) &
+    #    (incidence_table['age_class_upper'] == 34.0)
+    #]
+    #print (df_filtered)
     print(incidence_table)
 
 if __name__ == "__main__":
