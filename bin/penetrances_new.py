@@ -69,6 +69,7 @@ def main():
             if pd.isna(age_upper):
                 logging.info("Skipping age classes with undefined upper limit.")
                 continue
+            age_lower = df[(df['gender'] == gender) & (df['age_class_upper'] == age_upper)]['age_class_lower'].iloc[0]
             cumulative_risk = cr_model.calculate_cumulative_risk(
                 gender=gender,
                 age_class_upper=age_upper,
@@ -77,6 +78,7 @@ def main():
             cumulative_risks.append({
                 'gender': gender,
                 'age_class_upper': age_upper,
+                'age_class_lower': age_lower,
                 'cr_gen': cumulative_risk,
                 'cr_nc': np.nan,  # Placeholder for non-carrier CR
                 'cr_het': np.nan,  # Placeholder for heterozygote CR
@@ -137,12 +139,19 @@ def main():
     liability_classes_df = df[['gender', 'phenotype', 'age_class_lower', 'age_class_upper', 
                                'penetrance_nc', 'penetrance_het', 'penetrance_hom']]
     
+    # Add unaffected rows at the top
+    unaffected_rows = cumulative_risk_df[['gender', 'age_class_upper', 'age_class_lower', 'cr_nc', 'cr_het', 'cr_hom']].copy()
+    unaffected_rows['phenotype'] = 'Unaffected'
+    unaffected_rows.rename(columns={'cr_nc': 'penetrance_nc', 'cr_het': 'penetrance_het', 'cr_hom': 'penetrance_hom'}, inplace=True)
+    liability_classes_df = pd.concat([unaffected_rows, liability_classes_df], ignore_index=True)
 
-    # Output final cumulative risk data
-    print(cumulative_risk_df)
-    print ("=====")
-    print (df)
-    print ("=====")
+    # Sort and reset index with new label 'liability_class'
+    #liability_classes_df.sort_values(by=['gender', 'age_class_upper'], inplace=True)
+    liability_classes_df.reset_index(drop=True, inplace=True)
+    liability_classes_df.index.name = 'liability_class'
+    liability_classes_df = liability_classes_df[['gender', 'phenotype', 'age_class_lower', 'age_class_upper', 'penetrance_nc', 'penetrance_het', 'penetrance_hom']]
+
+    # Output final liability class penetrance data
     print (liability_classes_df)
 
 if __name__ == "__main__":
