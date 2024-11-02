@@ -85,8 +85,8 @@ class StaticLookupRRModel(RelativeRiskModel):
         
         # Retrieve the risks for the first matched row
         heterozygous_risk = filtered_df.iloc[0]["heterozygous_rr"]
-        homozygous_risk = filtered_df.iloc[0]["homozygous_rr"]
-
+        homozygous_risk = filtered_df.iloc[0]["homozygous_rr"] if not pd.isna(filtered_df.iloc[0]["homozygous_rr"]) else 0
+        
         logging.info(
             f"Retrieved RR for {self.gene}, age={age}, phenotype={phenotype}, gender={gender}: "
             f"Heterozygous={heterozygous_risk}, Homozygous={homozygous_risk}"
