@@ -9,6 +9,7 @@ from V3.core.setup_logging import setup_logging
 from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
 from V3.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
+from V3.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Initialize central data structure for penetrance calculations.")
@@ -19,7 +20,8 @@ def parse_arguments():
                         help="Set the logging level")
     parser.add_argument("--force-download", action="store_true", help="Force data re-download if necessary")
     parser.add_argument("--crhf_model", default="constant", help="Specify the CRHF model to use (default: constant)")
-    parser.add_argument("--gene", required=True, help="Specify the gene for CRHF calculation")
+    parser.add_argument("--rr_model", default="static_lookup", help="Specify the RR model to use (default: static_lookup)")
+    parser.add_argument("--gene", required=True, help="Specify the gene for CRHF and RR calculation")
     return parser.parse_args()
 
 def load_sources():
@@ -53,19 +55,26 @@ def main():
     # Initial structure of the central DataFrame
     central_df = df[["gender", "age_class_lower", "age_class_upper", "age_span", "phenotype", "incidence_rate"]].copy()
     
-    # Initialize CRHF model based on the CLI parameter
+    # Initialize CRHF model and calculate CRHF values
     crhf_model = CRHFModelFactory.create_model(args.crhf_model, gene=args.gene, data_frame=central_df)
-
-    # Calculate CRHF values for each row and add them to a new 'crhf' column
     central_df["crhf"] = central_df.apply(
         lambda row: crhf_model.calculate_crhf(row["gender"], row["age_class_upper"]), axis=1
     )
 
-    # Log the central DataFrame with CRHF values
-    logging.info(f"Central DataFrame with CRHF values:\n{central_df.head()}")
+    # Initialize RR model and calculate RR values
+    rr_model = RelativeRiskModelFactory.create_model(args.rr_model, gene=args.gene, data_frame=central_df)
+    central_df[["rr_het", "rr_hom"]] = central_df.apply(
+        lambda row: pd.Series(rr_model.calculate_relative_risk(age=row["age_class_upper"], 
+                                                               phenotype=row["phenotype"], 
+                                                               gender=row["gender"])),
+        axis=1
+    )
+
+    # Log the central DataFrame with CRHF and RR values
+    logging.info(f"Central DataFrame with CRHF and RR values:\n{central_df.head()}")
 
     # Output the central DataFrame for checking purposes
-    print("Central DataFrame with CRHF values:")
+    print("Central DataFrame with CRHF and RR values:")
     print(central_df)
 
 if __name__ == "__main__":
