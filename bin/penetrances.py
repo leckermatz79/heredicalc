@@ -1,8 +1,11 @@
-# V3/bin/penetrances.py
+# V3/bin/penetrances_new.py
+
 import argparse
 import os
 import logging
 import pandas as pd
+import yaml
+import numpy as np
 from V3.core.setup_logging import setup_logging
 from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
@@ -12,7 +15,7 @@ from V3.penetrances.relative_risk_models.relative_risk_model_factory import Rela
 from V3.penetrances.penetrance_models.penetrance_model_factory import PenetranceModelFactory
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Calculate penetrances for specified phenotypes.")
+    parser = argparse.ArgumentParser(description="Calculate penetrance for specified parameters.")
     parser.add_argument("--dataset", required=True, help="Specify the dataset (e.g., ci5_ix)")
     parser.add_argument("--population", help="Specify the population by key number (e.g., 38402499)")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
@@ -20,10 +23,11 @@ def parse_arguments():
     parser.add_argument("--force-download", action="store_true", help="Force data re-download")
     parser.add_argument("--phenotypes", nargs='+', required=True,
                         help="Specify phenotypes to include (e.g., BreastCancer OvarianCancer).")
-    parser.add_argument("--crhftype", default="constant", help="Specify the CRHF model type to use")
-    parser.add_argument("--rrtype", default="static_lookup", help="Specify the relative risk model type to use")
-    parser.add_argument("--penetrancetype", default="uniform_survival", help="Specify the penetrance model type to use")
-    parser.add_argument("--gene", required=True, help="Specify the gene for which penetrance is calculated")
+    parser.add_argument("--crhf_model", default="constant", help="Specify the CRHF model to use (default: constant)")
+    parser.add_argument("--rr_model", default="static_lookup", help="Specify the RR model to use (default: static_lookup)")
+    parser.add_argument("--penetrance_model", default="uniform_survival", help="Specify the penetrance model to use (default: uniform_survival)")
+    parser.add_argument("--cr_model", default="simple", help="Specify the cumulative risk model to use (default: simple)")
+    parser.add_argument("--gene", required=True, help="Specify the gene for CRHF calculation")
     return parser.parse_args()
 
 def load_sources():
@@ -46,7 +50,7 @@ def main():
     data_handler = DataSourceHandlerFactory.create_data_source_handler(source_config, force_download=args.force_download)
     data_handler.handle_data()
 
-    # Load and process data
+    # Load and process incidence data
     data_parser = IncidenceDataModelFactory.create_incidence_model(source_config, population=args.population)
     df = data_parser.parse_data()
     df = data_parser.filter_by_phenotypes(df, args.phenotypes)
@@ -54,55 +58,101 @@ def main():
     df = data_parser.add_age_span_column(df)
     df = data_parser.add_incidence_rate_column()
     logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
-
-    # Initialize cumulative risk, CRHF, and relative risk models
-    cumulative_risk_model = CumulativeRiskModelFactory.create_model("simple", df)
-    crhf_model = CRHFModelFactory.create_model(args.crhftype, gene=args.gene, data_frame=df)
-    relative_risk_model = RelativeRiskModelFactory.create_model(args.rrtype, gene=args.gene, df=df)
-    penetrance_model = PenetranceModelFactory.create_penetrance_model(args.penetrancetype, df, relative_risk_model, crhf_model)
     
-    # Define an empty list to store results
-    penetrance_data = []
-
-    # Loop through each gender, age class, and phenotype combination
+    # Initialize cumulative risk model
+    cr_model = CumulativeRiskModelFactory.create_model(args.cr_model, df)
+    
+    # DataFrame for cumulative risks
+    cumulative_risks = []
     for gender in df['gender'].unique():
         for age_upper in sorted(df['age_class_upper'].unique()):
             if pd.isna(age_upper):
-                logging.info("Skipping undefined age spans.")
+                logging.info("Skipping age classes with undefined upper limit.")
                 continue
-            
-            age_row = df[(df['age_class_upper'] == age_upper) & (df['gender'] == gender)].iloc[0]
-            age_lower = age_row['age_class_lower']
-            age_span = age_row['age_span']
-            incidence_rate = age_row['incidence_rate']
+            age_lower = df[(df['gender'] == gender) & (df['age_class_upper'] == age_upper)]['age_class_lower'].iloc[0]
+            cumulative_risk = cr_model.calculate_cumulative_risk(
+                gender=gender,
+                age_class_upper=age_upper,
+                phenotypes=args.phenotypes
+            )
+            cumulative_risks.append({
+                'gender': gender,
+                'age_class_upper': age_upper,
+                'age_class_lower': age_lower,
+                'cr_gen': cumulative_risk,
+                'cr_nc': np.nan,  # Placeholder for non-carrier CR
+                'cr_het': np.nan,  # Placeholder for heterozygote CR
+                'cr_hom': np.nan   # Placeholder for homozygote CR
+            })
+    cumulative_risk_df = pd.DataFrame(cumulative_risks)
 
-            for phenotype in args.phenotypes + ["Unaffected"]:
-                cumulative_risk = cumulative_risk_model.calculate_cumulative_risk(gender=gender, age_class_upper=age_upper, phenotypes=args.phenotypes)
-                crhf = crhf_model.calculate_crhf(gender=gender, age_class_upper=age_upper)
-                rr_het, rr_hom = relative_risk_model.calculate_relative_risk(age_upper, phenotype, gender)
+    crhf_model = CRHFModelFactory.create_model(args.crhf_model, args.gene, df)
+    rr_model = RelativeRiskModelFactory.create_model(args.rr_model, args.gene, df)
 
-                # Calculate penetrance
-                penetrance_nc, penetrance_het, penetrance_hom = penetrance_model.calculate_penetrance(
-                    gene=args.gene, phenotype=phenotype, cumulative_risk=cumulative_risk, 
-                    incidence_rate=incidence_rate, crhf=crhf, rr_het=rr_het, rr_hom=rr_hom, 
-                    gender=gender, age_class_upper=age_upper
-                )
+    # Calculate lambda values and add to central_df
+    for idx, row in df.iterrows():
+        crhf = crhf_model.calculate_crhf(row['gender'], row['age_class_upper'])
+        rr_het, rr_hom = rr_model.calculate_relative_risk(
+            age=row['age_class_upper'],
+            phenotype=row['phenotype'],
+            gender=row['gender']
+        )
+        
+        # Calculate lambda values
+        lambda_nc = row['incidence_rate'] / ((1 - crhf) + crhf * rr_het)
+        lambda_het = lambda_nc * rr_het
+        lambda_hom = lambda_nc * rr_hom if not pd.isna(rr_hom) else 0
 
-                # Append result
-                penetrance_data.append({
-                    'liability_class_id': f"{args.gene}_{gender}_{age_upper}",
-                    'penetrance_nc': penetrance_nc,
-                    'penetrance_het': penetrance_het,
-                    'penetrance_hom': penetrance_hom,
-                    'phenotype': phenotype,
-                    'gender': gender,
-                    'age_class_lower': age_lower,
-                    'age_class_upper': age_upper
-                })
+        # Store lambda values in the central DataFrame
+        df.loc[idx, 'lambda_nc'] = lambda_nc
+        df.loc[idx, 'lambda_het'] = lambda_het
+        df.loc[idx, 'lambda_hom'] = lambda_hom
+ 
+    #print(cumulative_risk_df)
+
+    # Calculate cumulative risks for non-carriers, heterozygotes, and homozygotes
+    for idx, row in cumulative_risk_df.iterrows():
+        age_upper = row['age_class_upper']
+        gender = row['gender']
+        
+        # Filter central_df to get sum of lambda values up to current age class
+        relevant_df = df[(df['gender'] == gender) & (df['age_class_upper'] <= age_upper)]
+        
+        # Calculate cumulative risk for non-carriers
+        lambda_nc_sum = (relevant_df['lambda_nc'] * relevant_df['age_span']).sum()
+        cumulative_risk_df.loc[idx, 'cr_nc'] = 1 - np.exp(-lambda_nc_sum)
+
+        # Calculate cumulative risk for heterozygotes
+        lambda_het_sum = (relevant_df['lambda_het'] * relevant_df['age_span']).sum()
+        cumulative_risk_df.loc[idx, 'cr_het'] = 1 - np.exp(-lambda_het_sum)
+
+        # Calculate cumulative risk for homozygotes
+        lambda_hom_sum = (relevant_df['lambda_hom'] * relevant_df['age_span']).sum()
+        cumulative_risk_df.loc[idx, 'cr_hom'] = 1 - np.exp(-lambda_hom_sum)
+
+    penetrance_model = PenetranceModelFactory.create_model(args.penetrance_model, df, cumulative_risk_df)
+
+    # Calculate penetrance for each liability class
+    df = penetrance_model.calculate_penetrance(df, cumulative_risk_df)
+    # Select required columns for the final liability classes DataFrame
     
-    # Convert results to a DataFrame and output
-    penetrance_df = pd.DataFrame(penetrance_data)
-    print(penetrance_df)
+    liability_classes_df = df[['gender', 'phenotype', 'age_class_lower', 'age_class_upper', 
+                               'penetrance_nc', 'penetrance_het', 'penetrance_hom']]
+    
+    # Add unaffected rows at the top
+    unaffected_rows = cumulative_risk_df[['gender', 'age_class_upper', 'age_class_lower', 'cr_nc', 'cr_het', 'cr_hom']].copy()
+    unaffected_rows['phenotype'] = 'Unaffected'
+    unaffected_rows.rename(columns={'cr_nc': 'penetrance_nc', 'cr_het': 'penetrance_het', 'cr_hom': 'penetrance_hom'}, inplace=True)
+    liability_classes_df = pd.concat([unaffected_rows, liability_classes_df], ignore_index=True)
+
+    # Sort and reset index with new label 'liability_class'
+    #liability_classes_df.sort_values(by=['gender', 'age_class_upper'], inplace=True)
+    liability_classes_df.reset_index(drop=True, inplace=True)
+    liability_classes_df.index.name = 'liability_class'
+    liability_classes_df = liability_classes_df[['gender', 'phenotype', 'age_class_lower', 'age_class_upper', 'penetrance_nc', 'penetrance_het', 'penetrance_hom']]
+
+    # Output final liability class penetrance data
+    print (liability_classes_df)
 
 if __name__ == "__main__":
     main()
