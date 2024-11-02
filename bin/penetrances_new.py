@@ -8,6 +8,7 @@ import yaml
 from V3.core.setup_logging import setup_logging
 from V3.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from V3.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
+from V3.cumulative_risk_models.cumulative_risk_model_factory import CumulativeRiskModelFactory
 from V3.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
 from V3.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
 
@@ -21,6 +22,7 @@ def parse_arguments():
     parser.add_argument("--force-download", action="store_true", help="Force data re-download if necessary")
     parser.add_argument("--crhf_model", default="constant", help="Specify the CRHF model to use (default: constant)")
     parser.add_argument("--rr_model", default="static_lookup", help="Specify the RR model to use (default: static_lookup)")
+    parser.add_argument("--cr_model", default="simple", help="Specify the cumulative risk model to use (default: simple)")
     parser.add_argument("--gene", required=True, help="Specify the gene for CRHF and RR calculation")
     return parser.parse_args()
 
@@ -70,12 +72,35 @@ def main():
         axis=1
     )
 
-    # Log the central DataFrame with CRHF and RR values
-    logging.info(f"Central DataFrame with CRHF and RR values:\n{central_df.head()}")
+    # Initialize cumulative risk model and prepare cumulative_risk_df
+    cr_model = CumulativeRiskModelFactory.create_model(args.cr_model, central_df)
+    cumulative_risks = []
+    for gender in central_df["gender"].unique():
+        for age_upper in sorted(central_df["age_class_upper"].unique()):
+            # Calculate cumulative risk for the general population
+            cr_gen = cr_model.calculate_cumulative_risk(
+                gender=gender, 
+                age_class_upper=age_upper, 
+                phenotypes=args.phenotypes
+            )
+            cumulative_risks.append({
+                'gender': gender,
+                'age_class_upper': age_upper,
+                'cr_gen': cr_gen,
+                'cr_nc': None,  # Placeholder for non-carriers
+                'cr_het': None,  # Placeholder for heterozygotes
+                'cr_hom': None   # Placeholder for homozygotes
+            })
 
-    # Output the central DataFrame for checking purposes
-    print("Central DataFrame with CRHF and RR values:")
-    print(central_df)
+    # Create DataFrame for cumulative risks
+    cumulative_risk_df = pd.DataFrame(cumulative_risks)
+
+    # Log and output the cumulative risk DataFrame for checking purposes
+    logging.info(f"Cumulative Risk DataFrame (general population):\n{cumulative_risk_df.head()}")
+    print ("Central DataFrame: ")
+    print (central_df)
+    print("Cumulative Risk DataFrame (general population):")
+    print(cumulative_risk_df)
 
 if __name__ == "__main__":
     main()
