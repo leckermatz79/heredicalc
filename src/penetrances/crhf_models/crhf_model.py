@@ -1,4 +1,4 @@
-# V3/penetrances/crhf_models/crhf_model.py
+penetrances/crhf_models/crhf_model.py
 
 from abc import ABC, abstractmethod
 

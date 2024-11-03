@@ -1,4 +1,4 @@
-# V3/bin/cumulative_risks.py
+bin/cumulative_risks.py
 import logging
 import argparse
 import pandas as pd

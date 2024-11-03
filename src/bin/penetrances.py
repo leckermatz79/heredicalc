@@ -1,4 +1,4 @@
-# V3/bin/penetrances_new.py
+bin/penetrances_new.py
 import argparse
 import logging
 import pandas as pd

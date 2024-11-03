@@ -1,4 +1,4 @@
-# V3/penetrances/crhf_models/crhf_model_factory.py
+penetrances/crhf_models/crhf_model_factory.py
 
 from .constant_crhf_model import ConstantCRHFModel
 

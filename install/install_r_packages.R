@@ -1,4 +1,4 @@
-# V3/install/install_r_packages.R
+install/install_r_packages.R
 # List of required packages
 required_packages <- c("pedtools", "segregatr")
 

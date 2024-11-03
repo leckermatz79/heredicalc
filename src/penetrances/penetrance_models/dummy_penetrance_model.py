@@ -1,4 +1,4 @@
-# V3/penetrances/penetrance_models/dummy_penetrance_model.py
+penetrances/penetrance_models/dummy_penetrance_model.py
 
 from .penetrance_model import PenetranceModel
 

@@ -1,4 +1,4 @@
-# V3/penetrances/penetrance_models/penetrance_model.py
+penetrances/penetrance_models/penetrance_model.py
 from abc import ABC, abstractmethod
 
 class PenetranceModel(ABC):

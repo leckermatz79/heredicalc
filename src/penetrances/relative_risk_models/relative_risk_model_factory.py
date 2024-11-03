@@ -1,4 +1,4 @@
-# V3/penetrances/relative_risks/relative_risk_model_factory.py
+penetrances/relative_risks/relative_risk_model_factory.py
 
 import logging
 from .static_lookup_rr_model import StaticLookupRRModel

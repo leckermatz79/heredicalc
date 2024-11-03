@@ -2,8 +2,8 @@ import yaml
 import logging
 from datetime import datetime
 import argparse
-from V3.core.setup_logging import setup_logging
-from V3.penetrances.crhf_models import CRHFModelFactory 
+from src.core.setup_logging import setup_logging
+from src.penetrances.crhf_models import CRHFModelFactory 
 
 def main():
     logging.info ("penetrance data handler called succesfully.")

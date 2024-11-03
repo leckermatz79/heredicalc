@@ -1,4 +1,4 @@
-# V3/cumulative_risks/cumulative_risk_model.py
+cumulative_risks/cumulative_risk_model.py
 
 from abc import ABC, abstractmethod
 import pandas as pd

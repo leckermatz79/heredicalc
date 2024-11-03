@@ -1,4 +1,4 @@
-# V3/penetrances/relative_risks/static_lookup_rr_model.py
+penetrances/relative_risks/static_lookup_rr_model.py
 
 import os
 import pandas as pd

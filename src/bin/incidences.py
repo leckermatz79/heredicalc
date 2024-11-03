@@ -1,4 +1,4 @@
-# V3/bin/incidences.py
+bin/incidences.py
 import logging
 import argparse
 from core.setup_logging import setup_logging

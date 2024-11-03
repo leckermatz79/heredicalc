@@ -1,4 +1,4 @@
-# V3/incidences/incidence_models/incidence_data_model_factory.py
+incidences/incidence_models/incidence_data_model_factory.py
 import logging
 from .ci5_detailed_incidence_model import CI5DetailedIncidenceModel
 from .ci5_summary_incidence_model import CI5SummaryIncidenceModel

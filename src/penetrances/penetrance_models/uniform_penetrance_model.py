@@ -1,4 +1,4 @@
-# V3/penetrances/penetrance_models/uniform_penetrance_model.py
+penetrances/penetrance_models/uniform_penetrance_model.py
 from .penetrance_model import PenetranceModel
 import pandas as pd
 

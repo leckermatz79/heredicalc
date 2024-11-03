@@ -1,4 +1,4 @@
-# V3/penetrances/relative_risks/relative_risk_model.py
+penetrances/relative_risks/relative_risk_model.py
 from abc import ABC, abstractmethod
 from typing import Tuple
 

@@ -1,4 +1,4 @@
-# V3/penetrances/penetrance_models/uniform_survival_penetrance_model.py
+penetrances/penetrance_models/uniform_survival_penetrance_model.py
 
 import logging
 from .penetrance_model import PenetranceModel
