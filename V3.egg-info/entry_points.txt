@@ -1,7 +1,0 @@
-[console_scripts]
-crhf = V3.bin.crhf:main
-cumulative_risks = V3.bin.cumulative_risks:main
-incidences = bin.incidences:main
-pedconv = V3.bin.ped_convert:main
-penetrances = V3.bin.penetrances:main
-relative_risks = V3.bin.relative_risks:main

@@ -1,5 +1,0 @@
-core
-cumulative_risk_models
-incidences
-pedconv
-penetrances

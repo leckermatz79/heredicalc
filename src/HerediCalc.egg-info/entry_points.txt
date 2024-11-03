@@ -1,0 +1,7 @@
+[console_scripts]
+crhf = bin.crhf:main
+cumulative_risks = bin.cumulative_risks:main
+incidences = bin.incidences:main
+pedconv = bin.pedconv:main
+penetrances = bin.penetrances:main
+relative_risks = bin.relative_risks:main
