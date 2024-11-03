@@ -26,6 +26,8 @@ def parse_arguments():
     parser.add_argument("--penetrance_model", default="uniform_survival", help="Specify the penetrance model to use (default: uniform_survival)")
     parser.add_argument("--cr_model", default="simple", help="Specify the cumulative risk model to use (default: simple)")
     parser.add_argument("--gene", required=True, help="Specify the gene for CRHF calculation")
+    parser.add_argument("--output_format", default="plain", help="Specify the output format. (default: plain)")
+    parser.add_argument("--output_file", default="stdout", help="Specify output file. (default: stdout)")
     return parser.parse_args()
 
 def main():
