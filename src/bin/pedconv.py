@@ -1,4 +1,4 @@
-# /bin/pedconv.py
+# bin/pedconv.py
 
 import argparse
 import logging

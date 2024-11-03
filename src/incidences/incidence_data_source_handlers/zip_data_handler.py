@@ -1,4 +1,4 @@
-incidences/incidence_data_source_handlers/zip_data_handler.py
+# incidences/incidence_data_source_handlers/zip_data_handler.py
 import os
 import logging
 import zipfile

@@ -1,4 +1,4 @@
-bin/relative_risks.py
+# bin/relative_risks.py
 import logging
 import argparse
 import pandas as pd

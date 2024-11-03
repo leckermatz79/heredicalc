@@ -1,4 +1,4 @@
-penetrances/crhf_models/crhf_values.yaml
+# penetrances/crhf_models/crhf_values.yaml
 # This file is DEPRECATED, not used anymore and marked for DELETION.
 # This file hold data for CRHF values for various genes. 
 # It is possible to model CRHF values along various parameters, but these features have not been implemented yet (due to lack of time and data). 

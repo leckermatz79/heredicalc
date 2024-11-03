@@ -1,4 +1,4 @@
-bin/penetrances_new.py
+# bin/penetrances.py
 import argparse
 import logging
 import pandas as pd
@@ -11,6 +11,7 @@ from src.cumulative_risks.cumulative_risk_model_factory import CumulativeRiskMod
 from src.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
 from src.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
 from src.penetrances.penetrance_models.penetrance_model_factory import PenetranceModelFactory
+from penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Calculate penetrance for specified parameters.")
@@ -146,7 +147,14 @@ def main():
     liability_classes_df = liability_classes_df[['gender', 'phenotype', 'age_class_lower', 'age_class_upper', 'penetrance_nc', 'penetrance_het', 'penetrance_hom']]
 
     # Output final liability class penetrance data
-    print (liability_classes_df)
+    #print (liability_classes_df)
+
+    # Create the exporter and export data
+    logging.info(f"Exporting data in {args.output_format} format to {args.output_file}.")
+    exporter = PenetranceExporterFactory.create_exporter(args.output_format, args.output_file)
+    exporter.export_data(liability_classes_df)
+
+    logging.info("Export completed.")
 
 if __name__ == "__main__":
     main()

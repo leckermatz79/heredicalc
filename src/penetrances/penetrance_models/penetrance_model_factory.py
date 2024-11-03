@@ -1,4 +1,4 @@
-penetrances/penetrance_models/penetrance_model_factory.py
+# penetrances/penetrance_models/penetrance_model_factory.py
 import logging
 from .uniform_penetrance_model import UniformPenetranceModel
 from .uniform_survival_penetrance_model import UniformSurvivalPenetranceModel

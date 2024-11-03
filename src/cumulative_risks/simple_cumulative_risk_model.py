@@ -1,4 +1,4 @@
-cumulative_risks/simple_cumulative_risk_model.py
+# cumulative_risks/simple_cumulative_risk_model.py
 
 import logging
 import numpy as np
