@@ -16,10 +16,13 @@ class PlainPenetranceExporter(PenetranceExporter):
             liability_classes (pd.DataFrame): Penetrance data with liability classes.
         """
         pd.set_option('display.max_rows', None)
-        if self.output_file == "stdout":
+        if self.output_file is None:
+            return liability_classes_df
+        elif self.output_file == "stdout":
             print(liability_classes_df)
         else:
             # Write Data to file
-            with open(self.output_file, "w") as file:
-                file.write(liability_classes_df.to_string())
+            liability_classes_df.to_pickle(self.output_file)
+            #with open(self.output_file, "w") as file:
+            #    file.write(liability_classes_df.to_string())
         pd.reset_option('display.max_rows')

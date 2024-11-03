@@ -21,7 +21,9 @@ class FLBPenetranceExporter(PenetranceExporter):
         output += ",\n".join(", ".join(map(str, row)) for row in penetrance_matrix)
         output += "), ncol=3, byrow=TRUE)\n\n"
 
-        if self.output_file == "stdout":
+        if self.output_file is None:
+            return output
+        elif self.output_file == "stdout":
             print(output)
         else:
             # Write Data to file

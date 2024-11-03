@@ -40,32 +40,36 @@ class SegregatrFLBPedigreeExporter(PedigreeExporter):
         mid_vector = ", ".join(df["mother_id"].fillna(0).astype(int).astype(str))
         sex_vector = ", ".join(df["sex"].astype(str))
 
-        # Write the data to an .R file in the expected vector format
-        with open(self.file_path, "w") as file:
-            file.write("ped <- ped(\n")
-            file.write(f"  id = c({id_vector}),\n")
-            file.write(f"  fid = c({fid_vector}),\n")
-            file.write(f"  mid = c({mid_vector}),\n")
-            file.write(f"  sex = c({sex_vector}),\n")
-            file.write('  famid = "",\n')
-            file.write("  reorder = TRUE,\n")
-            file.write("  validate = TRUE,\n")
-            file.write("  detectLoops = TRUE,\n")
-            file.write("  isConnected = FALSE,\n")
-            file.write("  verbose = FALSE\n")
-            file.write(")\n\n")
+        export_str += "ped <- ped(\n"
+        export_str += f"  id = c({id_vector}),\n"
+        export_str += f"  fid = c({fid_vector}),\n"
+        export_str += f"  mid = c({mid_vector}),\n"
+        export_str += f"  sex = c({sex_vector}),\n"
+        export_str += '  famid = "",\n')
+        export_str += "  reorder = TRUE,\n"
+        export_str += "  validate = TRUE,\n"
+        export_str += "  detectLoops = TRUE,\n"
+        export_str += "  isConnected = FALSE,\n"
+        export_str += "  verbose = FALSE\n"
+        export_str += ")\n\n"
 
-            # Write the genotype status vectors for carriers, homozygous, and noncarriers
-            file.write("# Genotype-specific vectors\n")
-            file.write(f"carriers <- c({', '.join(map(str, carriers))})\n")
-            file.write(f"homozygous <- c({', '.join(map(str, homozygous))})\n")
-            file.write(f"noncarriers <- c({', '.join(map(str, noncarriers))})\n")
+        # Write the genotype status vectors for carriers, homozygous, and noncarriers
+        export_str += "# Genotype-specific vectors\n"
+        export_str += f"carriers <- c({', '.join(map(str, carriers))})\n"
+        export_str += f"homozygous <- c({', '.join(map(str, homozygous))})\n"
+        export_str += f"noncarriers <- c({', '.join(map(str, noncarriers))})\n"
 
-            file.write(f"affected <- c({', '.join(affected)})\n")
-            file.write(f"unknown <- c({', '.join(unknown)})\n")
+        export_str += f"affected <- c({', '.join(affected)})\n"
+        export_str += f"unknown <- c({', '.join(unknown)})\n"
 
-            # Add proband ID (Indexperson)
-            file.write(f"proband <- {proband_id}\n")
-
-            # Example FLB function call setup
-            #file.write("FLB(ped, proband=proband)\n")            
+        # Add proband ID (Indexperson)
+        export_str += f"proband <- {proband_id}\n"
+        
+        if self.file_path is None:
+            return export_str
+        elif self.file_path == "stdout":
+            print(export_str)
+        else:
+            # Write the data to an .R file in the expected vector format
+            with open(self.file_path, "w") as file:
+                file.write(export_str)

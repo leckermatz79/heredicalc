@@ -4,6 +4,8 @@ import sys
 import hashlib
 import subprocess
 import pandas as pd
+from src.flb.liabilities_mapper import map_liabilities
+
 
 CACHE_DIR = Path("cache")  # Directory for cached liabilities
 
@@ -48,7 +50,7 @@ def recalculate_liabilities(dataset, population, phenotypes, gene, crhf_model, r
          "--population", population, "--phenotypes", *phenotypes, "--gene", gene,
          "--crhf_model", crhf_model, "--rr_model", rr_model, "--cr_model", cr_model, "--penetrance_model", penetrance_model,
          "--output_format", "flb", "--output_file", str(cache_file)],
-        capture_output=True, text=True
+        capture_output=False, text=True
     )
     if result.returncode != 0:
         raise RuntimeError(f"Error calculating liabilities: {result.stderr}")
@@ -57,6 +59,7 @@ def recalculate_liabilities(dataset, population, phenotypes, gene, crhf_model, r
 def main():
     parser = argparse.ArgumentParser(description="Execute FLB calculation with pedigree and liability data.")
     parser.add_argument("--pedigree_file", type=Path, required=True, help="Path to the pedigree file (e.g., example.ped)")
+    parser.add_argument("--pedigree_format", type=str, required=True, help="Format of the pedigree file (e.g., cool)")
     parser.add_argument("--liabilities_file", type=Path, help="Optional path to the liabilities file.")
     parser.add_argument("--dataset", help="Specify the dataset (e.g., ci5_ix)")
     parser.add_argument("--population", help="Specify the population by key number (e.g., 38402499)")
@@ -97,7 +100,8 @@ def main():
             # Ask user if recalculation is desired
             response = input("Cached liabilities data found. Recalculate? (y/n): ").strip().lower()
             if response == 'y':
-                liabilities_file = recalculate_liabilities(args.dataset, args.population, args.phenotypes, args.gene, args.crhf_model, args.rr_model, args.cr_model, hash_value)
+                liabilities_file = recalculate_liabilities(args.dataset, args.population, args.phenotypes, args.gene, args.crhf_model, args.rr_model, args.cr_model, hash_value, args.penetrance_model)
+                print(f"Recalculated and cached liabilities data: {liabilities_file}")
             else:
                 liabilities_file = cached_file
                 print(f"Using cached liabilities data: {liabilities_file}")
@@ -106,7 +110,8 @@ def main():
             liabilities_file = recalculate_liabilities(args.dataset, args.population, args.phenotypes, args.gene, args.crhf_model, args.rr_model, args.cr_model, hash_value, args.penetrance_model)
             print(f"Recalculated and cached liabilities data: {liabilities_file}")
 
-    # Further code for executing FLB calculation would go here...
+        liability_vector_str = map_liabilities(liabilities_file, args.pedigree_file)
+
 
 if __name__ == "__main__":
     main()

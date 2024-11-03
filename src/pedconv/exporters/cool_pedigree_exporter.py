@@ -47,6 +47,11 @@ class CoolPedigreeExporter(PedigreeExporter):
 
         # Replace any empty cells with the Cool-specific placeholder "."
         export_df = export_df.replace({"": "."})
-        
-        # Save to a tab-delimited file
-        export_df.to_csv(self.file_path, sep="\t", index=False, lineterminator="\n")
+        if self.file_path is None:
+            return export_df
+        elif self.file_path == "stdout":
+            print(export_df)
+        else:
+            # Write Data to file 
+            # Save to a tab-delimited file
+            export_df.to_csv(self.file_path, sep="\t", index=False, lineterminator="\n")
