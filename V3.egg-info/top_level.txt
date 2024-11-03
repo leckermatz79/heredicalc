@@ -1,4 +1,5 @@
 core
-cumulative_risks
+cumulative_risk_models
 incidences
+pedconv
 penetrances
