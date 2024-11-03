@@ -11,7 +11,7 @@ from src.cumulative_risks.cumulative_risk_model_factory import CumulativeRiskMod
 from src.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
 from src.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
 from src.penetrances.penetrance_models.penetrance_model_factory import PenetranceModelFactory
-from penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
+from src.penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Calculate penetrance for specified parameters.")

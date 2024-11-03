@@ -11,7 +11,7 @@ def parse_arguments():
     parser.add_argument("--in_format", required=True, help="Specify the import format (e.g., 'cool').")
     parser.add_argument("--out_format", required=True, help="Specify the export format (e.g., 'segregatr_flb').")
     parser.add_argument("--infile", required=True, help="Path to the input pedigree file.")
-    parser.add_argument("--outfile", required=True, help="Path to the output file.")
+    parser.add_argument("--output_file", required=True, help="Path to the output file.")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
                         help="Set the logging level.")
     return parser.parse_args()
@@ -29,10 +29,10 @@ def main():
     logging.info("Data imported successfully.")
 
     # Export the pedigree data using the specified exporter
-    exporter = PedigreeExporterFactory.create_exporter(args.out_format, args.outfile)
+    exporter = PedigreeExporterFactory.create_exporter(args.out_format, args.output_file)
     #exporter.file_path = args.output_file  # Set the output file path directly
     exporter.export_data(pedigree)
-    logging.info(f"Data exported successfully to {args.outfile}")
+    logging.info(f"Data exported successfully to {args.output_file}")
 
 if __name__ == "__main__":
     main()
