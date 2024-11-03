@@ -1,6 +1,7 @@
 [console_scripts]
 crhf = bin.crhf:main
 cumulative_risks = bin.cumulative_risks:main
+flb = bin.flb:main
 incidences = bin.incidences:main
 pedconv = bin.pedconv:main
 penetrances = bin.penetrances:main

@@ -10,11 +10,14 @@ src/HerediCalc.egg-info/top_level.txt
 src/bin/__init__.py
 src/bin/crhf.py
 src/bin/cumulative_risks.py
+src/bin/flb.py
 src/bin/incidences.py
 src/bin/pedconv.py
 src/bin/penetrances.py
 src/bin/relative_risks.py
 src/core/__init__.py
+src/core/config.py
+src/core/setup_data_sources.py
 src/core/setup_logging.py
 src/cumulative_risks/__init__.py
 src/cumulative_risks/cumulative_risk_model.py
@@ -51,6 +54,11 @@ src/penetrances/crhf_models/__init__.py
 src/penetrances/crhf_models/constant_crhf_model.py
 src/penetrances/crhf_models/crhf_model.py
 src/penetrances/crhf_models/crhf_model_factory.py
+src/penetrances/exporters/__init__.py
+src/penetrances/exporters/flb_penetrance_exporter.py
+src/penetrances/exporters/penetrance_exporter.py
+src/penetrances/exporters/penetrance_exporter_factory.py
+src/penetrances/exporters/plain_penetrance_exporter.py
 src/penetrances/penetrance_models/__init__.py
 src/penetrances/penetrance_models/dummy_penetrance_model.py
 src/penetrances/penetrance_models/penetrance_model.py

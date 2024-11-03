@@ -22,27 +22,27 @@ def validate_args(args):
 
     # If both liabilities_file and recalculation parameters are provided
     if args.liabilities_file and (args.dataset or args.population or args.phenotypes or args.gene or args.crhf_model or args.rr_model or args.cr_model or args.penetrance_model):
-        print("Error: You specified both a liabilities file and parameters for recalculating liabilities.")
-        print("Please provide either a liabilities file or the parameters for recalculation, not both.")
-        print("Use flb.py --help for more information.")
+        logging.error("Error: You specified both a liabilities file and parameters for recalculating liabilities.")
+        logging.error("Please provide either a liabilities file or the parameters for recalculation, not both.")
+        logging.error("Use flb.py --help for more information.")
         sys.exit(1)
 
     # If no liabilities_file is provided, ensure all recalculation parameters are present
     if not args.liabilities_file and not (args.dataset and args.population and args.phenotypes and args.gene and args.crhf_model and args.rr_model and args.cr_model and args.penetrance_model):
-        print("Error: No liabilities file specified, and missing parameters for recalculation.")
-        print("Please specify either a liabilities file or provide all required parameters for recalculation.")
-        print("Use flb.py --help for more information.")
+        logging.error("Error: No liabilities file specified, and missing parameters for recalculation.")
+        logging.error("Please specify either a liabilities file or provide all required parameters for recalculation.")
+        logging.error("Use flb.py --help for more information.")
         sys.exit(1)
 
     # Validate force_recalculate to be one of the allowed options
     if args.force_recalculate not in ["no", "yes", "ask"]:
-        print("Error: --force-recalculate must be one of 'no', 'yes', or 'ask'.")
-        print("Use flb.py --help for more information.")
+        logging.error("Error: --force-recalculate must be one of 'no', 'yes', or 'ask'.")
+        logging.error("Use flb.py --help for more information.")
         sys.exit(1)
 
 def generate_hash(dataset, population, phenotypes, gene, crhf_model, rr_model, cr_model, penetrance_model):
     # Generate an md5 hash from the input parameters to create a unique cache identifier
-    data_string = f"{dataset}_{population}_{sorted(phenotypes)}_{gene}_{crhf_model}_{rr_model}_{cr_model}_{penetrance_model}"
+    data_string = f"{dataset}_{population}_{'_'.join(sorted(phenotypes))}_{gene}_{crhf_model}_{rr_model}_{cr_model}_{penetrance_model}"
     return md5(data_string.encode()).hexdigest()
 
 def check_cache(hash_value):
@@ -77,6 +77,8 @@ def run_flb_calculation(r_input, use_file=False):
     """
     # Define the R script path
     r_script_path = Path(__file__).resolve().parent.parent / "flb" / "flb_script.R"
+    if not r_script_path.exists():
+        raise FileNotFoundError(f"R script not found at {r_script_path}")
     
     # Define the arguments for subprocess.run
     if use_file:
@@ -101,13 +103,15 @@ def run_flb_calculation(r_input, use_file=False):
     return result.stdout.strip()
 
 def main():
+    CACHE_DIR.mkdir(exist_ok=True)
+
     parser = argparse.ArgumentParser(description="Execute FLB calculation with pedigree and liability data.")
     parser.add_argument("--pedigree_file", type=Path, required=True, help="Path to the pedigree file (e.g., example.ped)")
     parser.add_argument("--pedigree_format", type=str, required=True, help="Format of the pedigree file (e.g., cool)")
     parser.add_argument("--liabilities_file", type=Path, help="Optional path to the liabilities file.")
     parser.add_argument("--dataset", help="Specify the dataset (e.g., ci5_ix)")
     parser.add_argument("--population", help="Specify the population by key number (e.g., 38402499)")
-    parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
+    parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                         help="Set the logging level")
     parser.add_argument("--phenotypes", nargs='+',
                         help="Specify phenotypes to include (e.g., BreastCancer OvarianCancer).")
@@ -122,13 +126,17 @@ def main():
     parser.add_argument("--output", type=str, default="stdout", help="Output target: 'stdout' or file path")
 
     args = parser.parse_args()
+    logging.basicConfig(level=args.log_level)
     validate_args(args)
+
 
     # Step 1: Load and convert pedigree
     pedigree = Pedigree()
     importer = PedigreeImporterFactory.create_importer(args.pedigree_format, args.pedigree_file)
     importer.import_data(pedigree)
     pedigree.members_df = pedigree.members_df.sort_values(by="id").reset_index(drop=True)
+    # print (pedigree.members_df)
+    # sys.exit(0)
     exporter = PedigreeExporterFactory.create_exporter("segregatr_flb", None) 
     flb_pedigree = exporter.export_data(pedigree.members_df)  # R-compatible Snippet for FLB
     # pedigree now holds working copy of pedigree, 
@@ -155,9 +163,16 @@ def main():
     else: 
         # either no cached file, or cached file and force_recalculate = yes
         # (re)calculate liability, and save to file
-        liabilities_file = calculate_liabilities(args.dataset, args.population, args.phenotypes, args.gene, args.crhf_model, args.rr_model, args.cr_model, hash_value, args.penetrance_model)
-        logging.info(f"(Re-)calculated and cached liabilities data: {liabilities_file}")
-    
+        try:
+            liabilities_file = calculate_liabilities(
+                args.dataset, args.population, args.phenotypes, args.gene, 
+                args.crhf_model, args.rr_model, args.cr_model, hash_value, args.penetrance_model
+            )
+            logging.info(f"(Re-)calculated and cached liabilities data: {liabilities_file}")
+        except RuntimeError as e:
+            logging.error(f"Failed to calculate liabilities: {e}")
+            sys.exit(1)
+
     liabilities_data = pd.read_pickle(liabilities_file) 
     if liabilities_data.empty:
         # this is wrong, and the liability data is missing!
@@ -167,20 +182,31 @@ def main():
 
     # Step 3: Map liabilities to pedigree
     liability_vector_str = map_liabilities(liabilities_data, pedigree.members_df)
+    if not liability_vector_str:
+        logging.error("Failed to map liabilities to pedigree.")
+        sys.exit(1)
 
     # Step 4: Export liabilities in FLB format
-    liab_exporter = PenetranceExporterFactory.create_exporter('flb', None)  
+    liab_exporter = PenetranceExporterFactory.create_exporter('flb', None)
+    if liab_exporter is None:
+        logging.error("Failed to create Penetrance exporter for FLB format.")
+        sys.exit(1)
     flb_liabilities = liab_exporter.export_data(liabilities_data)
 
     # Step 5: Concatenate strings for R-script
-    r_input_str = f"{flb_pedigree}\n{liability_vector_str}\n{flb_liabilities}\nallele_freq <- {args.afreq}"
+    allele_freq = float(args.afreq)
+    r_input_str = f"{flb_pedigree}\n{liability_vector_str}\n{flb_liabilities}\nallele_freq <- {allele_freq}"
     if len(r_input_str) < CLI_CUTOFF:
         flb_result = run_flb_calculation(r_input_str)
     else:
         with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
             tmpfile.write(r_input_str.encode())
             tmpfile_path = tmpfile.name
-        flb_result = run_flb_calculation(tmpfile_path, use_file=True)
+        try:
+            flb_result = run_flb_calculation(tmpfile_path, use_file=True)
+        finally:
+            pass
+            #Path(tmpfile_path).unlink()  # Delete the temporary file
 
     # Step 6: Output the FLB result
     if args.output == "stdout":

@@ -16,7 +16,7 @@ class SegregatrFLBPedigreeExporter(PedigreeExporter):
         Parameters:
             pedigree (Pedigree): The Pedigree instance containing the data.
         """  
-        df = pedigree.members_df.copy()
+        df = pedigree.copy()
         df = df.infer_objects()
 
         # Map gender to R format (1 = M, 2 = F)
@@ -40,12 +40,12 @@ class SegregatrFLBPedigreeExporter(PedigreeExporter):
         mid_vector = ", ".join(df["mother_id"].fillna(0).astype(int).astype(str))
         sex_vector = ", ".join(df["sex"].astype(str))
 
-        export_str += "ped <- ped(\n"
+        export_str = "ped <- ped(\n"
         export_str += f"  id = c({id_vector}),\n"
         export_str += f"  fid = c({fid_vector}),\n"
         export_str += f"  mid = c({mid_vector}),\n"
         export_str += f"  sex = c({sex_vector}),\n"
-        export_str += '  famid = "",\n')
+        export_str += '  famid = "",\n'
         export_str += "  reorder = TRUE,\n"
         export_str += "  validate = TRUE,\n"
         export_str += "  detectLoops = TRUE,\n"

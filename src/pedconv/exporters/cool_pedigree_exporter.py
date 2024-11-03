@@ -9,6 +9,28 @@ class CoolPedigreeExporter(PedigreeExporter):
     """
     def __init__(self, file_path):
         self.file_path = file_path
+        self.COOL_MAPPINGS = {
+            'Unaffected': 'unaff',
+            'EsophagealCancer': 'Oesoph',
+            'StomachCancer': 'Stomach',
+            'ColorectalCancer': 'CRC',
+            'LiverCancer': 'Liver',
+            'PancreaticCancer': 'PanCa',
+            'LungCancer': 'Lung',
+            'Melanoma': 'CM',
+            'BreastCancer': 'BrCa',
+            'CervicalCancer': 'Cervix',
+            'EndometrialCancer': 'Corpus',
+            'UterineCancer': 'Uterus',
+            'OvarianCancer': 'OvCa',
+            'ProstateCancer': 'ProCa',
+            'KidneyCancer': 'Kidney',
+            'BladderCancer': 'Bladder',
+            'ThyroidCancer': 'Thyroid',
+            'NonHodgkinLymphoma': 'NH.lym',
+            'Leukemia': 'Leuk',
+            'Unknown': '.',
+        }
 
     def export_data(self, pedigree):
         """
@@ -37,7 +59,7 @@ class CoolPedigreeExporter(PedigreeExporter):
             "Father": df["father_id"],
             "Mother": df["mother_id"],
             "Sex": df["gender"].fillna("."),
-            "Aff": df["phenotypes"].apply(lambda ph: ph[0]["phenotype"] if ph else "."),
+            "Aff": df["phenotypes"].apply(lambda ph: self.COOL_MAPPINGS.get(ph[0]["phenotype"], ".") if ph else "."),
             "Age": df["age_last_seen"].fillna(".").astype(str),
             "Geno": df["Geno"],
             "FPTP": df["is_index_person"].apply(lambda x: 1 if x else 0)

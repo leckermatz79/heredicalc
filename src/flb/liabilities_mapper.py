@@ -1,6 +1,6 @@
 import pandas as pd
 
-def map_liabilities(liabilities_file, pedigree_file):
+def map_liabilities(liabilities_df, pedigree_df):
     """
     Maps liability classes to individuals in the pedigree based on gender, age, and phenotype,
     and returns a vector with the row numbers of penetrances for each individual.
@@ -14,8 +14,8 @@ def map_liabilities(liabilities_file, pedigree_file):
     """
     
     # Load liabilities and pedigree data
-    liabilities_df = pd.read_csv(liabilities_file)
-    pedigree_df = pd.read_csv(pedigree_file, delim_whitespace=True)
+    #liabilities_df = pd.read_pickle(liabilities_file)
+    #pedigree_df = pd.read_csv(pedigree_file, delim_whitespace=True)
     
     # Ensure the pedigree data is sorted by 'id'
     pedigree_df = pedigree_df.sort_values(by='id').reset_index(drop=True)
@@ -27,9 +27,14 @@ def map_liabilities(liabilities_file, pedigree_file):
     for _, ped_row in pedigree_df.iterrows():
         # Extract relevant attributes for matching
         ped_gender = ped_row['gender']
-        ped_age = ped_row['age']
-        ped_phenotype = ped_row['phenotype']
-
+        ped_age = ped_row['age_last_seen']
+        # Treat Unkonwn phenotype as Unaffected for liability class mapping
+        if ped_row['phenotypes']:
+            ped_phenotype = ped_row['phenotypes'][0].get("phenotype", "Unaffected")
+        else:
+            ped_phenotype = "Unaffected"
+        #ped_phenotype = "Unaffected" if ped_row['phenotypes'] == "Unknown" else ped_row['phenotypes']
+        
         # Filter liabilities to match the individual's gender and phenotype
         matching_liabilities = liabilities_df[
             (liabilities_df['gender'] == ped_gender) &
@@ -38,8 +43,8 @@ def map_liabilities(liabilities_file, pedigree_file):
 
         # Find the matching liability class based on age range
         matched_liability = matching_liabilities[
-            (matching_liabilities['age_min'] <= ped_age) &
-            (matching_liabilities['age_max'] >= ped_age)
+            (matching_liabilities['age_class_lower'] <= ped_age) &
+            (matching_liabilities['age_class_upper'] >= ped_age)
         ]
 
         # Append the row number (1-based index) of the matched liability class or default to 1
@@ -51,6 +56,6 @@ def map_liabilities(liabilities_file, pedigree_file):
         liability_vector.append(liability_class_index)
 
     # Convert the liability vector to a string format suitable for R
-    liability_str = "c(" + ", ".join(map(str, liability_vector)) + ")"
+    liability_str = "liability <- c(" + ", ".join(map(str, liability_vector)) + ")"
     
     return liability_str
