@@ -25,7 +25,7 @@ class DataSourceHandler(ABC):
         """Logs a new timestamp in the download history file."""
         timestamp = datetime.now().isoformat()
         with open(self.history_file, "a") as f:
-            f.write(f"{timestamp}\nDownloaded data from {self.url}\n")
+            f.write(f"Downloaded data from {self.url} : {timestamp}\n")
         logging.info(f"Download timestamp logged: {timestamp}")
 
     def prompt_for_redownload(self):
