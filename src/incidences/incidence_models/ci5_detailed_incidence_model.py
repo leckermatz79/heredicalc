@@ -2,22 +2,36 @@
 from .incidence_data_model import IncidenceDataModel
 import pandas as pd
 import logging
+import sys
 
 class CI5DetailedIncidenceModel(IncidenceDataModel):
     """Parser for CI5 detailed data format."""
+
     def parse_data(self, df=None):
         """Parse the CSV data file for the selected population in CI5 detailed format."""
         if df is None:
             file_path = self.get_population_file_path()
             has_header = self.source_config.get("has_header", False)
             df = pd.read_csv(file_path, header=0 if has_header else None)
-        
+        #unknown_age_class = self.source_config.get("unknown_age_class")
+        unknown_age_class = self.source_config['age_structure']['unknown_age_class']
+        age_column = self.column_mappings.get("age_col")
+        df = df[df.iloc[:, age_column] != unknown_age_class]    
+        # logging.debug("##########################################################################")
+        # logging.debug (unknown_age_class)
+        # logging.debug("--")
+        # logging.debug (has_header)
+        # logging.debug(df)
+        # sys.exit(0)
+
+
         # get_column retrieves column name or numbers and respects a present header line. 
         gender = self.get_column("gender_col", df)
         phenotype = self.get_column("phenotype_col", df)
         age = self.get_column("age_col", df)
         cases = self.get_column("cases_col", df)
         person_years = self.get_column("person_years_col", df)
+
 
         # Combine parsed data into a consistent DataFrame for further processing
         parsed_df = pd.DataFrame({
@@ -26,7 +40,7 @@ class CI5DetailedIncidenceModel(IncidenceDataModel):
             "age": age,
             "cases": cases,
             "person_years": person_years
-        })
+        })  
         
         return parsed_df
 

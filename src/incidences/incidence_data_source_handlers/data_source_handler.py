@@ -43,10 +43,12 @@ class DataSourceHandler(ABC):
     def handle_data(self):
         """Main method to handle data download based on conditions."""
         if self.check_data_exists():
-            if self.force_download:
-                self.clear_data_dir()
-                self.download_and_extract()
-            elif self.prompt_for_redownload():
+            if self.force_download == "ask":
+                if self.prompt_for_redownload():
+                    self.force_download == "no"
+                else:
+                    self.force_download == "yes"
+            if self.force_download == "yes":
                 self.clear_data_dir()
                 self.download_and_extract()
             else:

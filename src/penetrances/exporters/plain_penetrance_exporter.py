@@ -1,5 +1,5 @@
 # src/penetrances/exporters/plain_penetrance_exporter.py
-
+import logging
 import pandas as pd
 from .penetrance_exporter import PenetranceExporter
 
@@ -20,9 +20,15 @@ class PlainPenetranceExporter(PenetranceExporter):
             return liability_classes_df
         elif self.output_file == "stdout":
             print(liability_classes_df)
+            pd.reset_option('display.max_rows')
+            return True
         else:
-            # Write Data to file
-            liability_classes_df.to_pickle(self.output_file)
-            #with open(self.output_file, "w") as file:
-            #    file.write(liability_classes_df.to_string())
-        pd.reset_option('display.max_rows')
+            try:
+                liability_classes_df.to_pickle(self.output_file)
+                logging.debug(f"Data successfully saved to {self.output_file}")
+                pd.reset_option('display.max_rows')
+                return True
+            except (FileNotFoundError, IOError, OSError) as e:
+                logging.error(f"Error saving data to {self.output_file}: {e}")
+                pd.reset_option('display.max_rows')
+                return False

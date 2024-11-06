@@ -3,6 +3,7 @@ import argparse
 import logging
 import pandas as pd
 import numpy as np
+import sys
 from src.core.setup_logging import setup_logging
 from src.core.setup_data_sources import load_incidence_data_sources
 from src.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
@@ -19,7 +20,8 @@ def parse_arguments():
     parser.add_argument("--population", help="Specify the population by key number (e.g., 38402499)")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "SILENT"],
                         help="Set the logging level")
-    parser.add_argument("--force-download", action="store_true", help="Force data re-download")
+    parser.add_argument("--force_download", type=str, choices=["no", "yes", "ask"], default="no", 
+                        help="Force fresh download of incidence data, if applicalbe 'no' (default), 'yes' to force download, or 'ask' to confirm.")
     parser.add_argument("--phenotypes", nargs='+', required=True,
                         help="Specify phenotypes to include (e.g., BreastCancer OvarianCancer).")
     parser.add_argument("--crhf_model", default="constant", help="Specify the CRHF model to use (default: constant)")
@@ -31,46 +33,57 @@ def parse_arguments():
     parser.add_argument("--output_file", default="stdout", help="Specify output file. (default: stdout)")
     return parser.parse_args()
 
-def main():
-    args = parse_arguments()
-    setup_logging(args.log_level)
-    
+def run_penetrance_calculation(dataset, population, log_level="INFO", force_download=False, phenotypes=None,
+                               crhf_model="constant", rr_model="static_lookup", penetrance_model="uniform_survival",
+                               cr_model="simple", gene=None, output_format="plain", output_file="stdout"):
     # Load dataset configuration
     sources = load_incidence_data_sources()["sources"]
-    if args.dataset not in sources:
-        logging.error(f"Dataset '{args.dataset}' not found in sources.yaml.")
+    if dataset not in sources:
+        logging.error(f"Dataset '{dataset}' not found in sources.yaml.")
         return
 
-    source_config = sources[args.dataset]
-    data_handler = DataSourceHandlerFactory.create_data_source_handler(source_config, force_download=args.force_download)
+    source_config = sources[dataset]
+    data_handler = DataSourceHandlerFactory.create_data_source_handler(source_config, force_download=force_download)
     data_handler.handle_data()
 
     # Load and process incidence data
-    data_parser = IncidenceDataModelFactory.create_incidence_model(source_config, population=args.population)
+    data_parser = IncidenceDataModelFactory.create_incidence_model(source_config, population=population)
     df = data_parser.parse_data()
-    df = data_parser.filter_by_phenotypes(df, args.phenotypes)
+    df = data_parser.filter_by_phenotypes(df, phenotypes)
     df = data_parser.build_incidence_table(df)
     df = data_parser.add_age_span_column(df)
     df = data_parser.add_incidence_rate_column()
-    logging.info(f"Data for {args.dataset} and population {data_parser.population} processed successfully.")
-    
+    logging.info(f"Data for {dataset} and population {data_parser.population} processed successfully.")
+
     # Initialize cumulative risk model
-    cr_model = CumulativeRiskModelFactory.create_model(args.cr_model, df)
-    
-    # DataFrame for cumulative risks
+    cr_model = CumulativeRiskModelFactory.create_model(cr_model, df)
+        # DataFrame for cumulative risks
     cumulative_risks = []
     for gender in df['gender'].unique():
-        for age_upper in sorted(df['age_class_upper'].unique()):
-            if pd.isna(age_upper):
-                logging.info("Skipping age classes with undefined upper limit.")
-                continue
-            age_lower = df[(df['gender'] == gender) & (df['age_class_upper'] == age_upper)]['age_class_lower'].iloc[0]
-            cumulative_risk = cr_model.calculate_cumulative_risk(
-                gender=gender,
-                age_class_upper=age_upper,
-                phenotypes=args.phenotypes
-            )
-            cumulative_risks.append({
+        #for age_upper in sorted(df['age_class_upper'].unique()):
+        for age_lower in sorted(df['age_class_lower'].unique()):
+            # Standard handling for defined age classes
+            logging.debug(f"gender: {gender}, age_class_lower: {age_lower}")
+            if not np.isnan(age_lower):
+                age_upper = df[(df['gender'] == gender) & (df['age_class_lower'] == age_lower)]['age_class_upper'].iloc[0]
+            else:
+                #continue
+                age_upper = np.nan
+            logging.debug(f"Age Upper: {age_upper}")
+            if isinstance(age_upper, (int, float)) and not np.isnan(age_upper):
+                logging.debug ("Calculating.")
+                cumulative_risk = cr_model.calculate_cumulative_risk(
+                    gender=gender,
+                    age_class_upper=age_upper,
+                    phenotypes=phenotypes
+                )
+            else:
+                cumulative_risk = np.nan
+                logging.debug (f"Setting to {cumulative_risk}.")
+
+
+            # Add the entry to cumulative_risks
+            current_risk = {
                 'gender': gender,
                 'age_class_upper': age_upper,
                 'age_class_lower': age_lower,
@@ -78,11 +91,15 @@ def main():
                 'cr_nc': np.nan,  # Placeholder for non-carrier CR
                 'cr_het': np.nan,  # Placeholder for heterozygote CR
                 'cr_hom': np.nan   # Placeholder for homozygote CR
-            })
+            }
+            
+            cumulative_risks.append(current_risk)
+            logging.info("current risk appended.")
+
     cumulative_risk_df = pd.DataFrame(cumulative_risks)
 
-    crhf_model = CRHFModelFactory.create_model(args.crhf_model, args.gene, df)
-    rr_model = RelativeRiskModelFactory.create_model(args.rr_model, args.gene, df)
+    crhf_model = CRHFModelFactory.create_model(crhf_model, gene, df)
+    rr_model = RelativeRiskModelFactory.create_model(rr_model, gene, df)
 
     # Calculate lambda values and add to central_df
     for idx, row in df.iterrows():
@@ -125,7 +142,7 @@ def main():
         lambda_hom_sum = (relevant_df['lambda_hom'] * relevant_df['age_span']).sum()
         cumulative_risk_df.loc[idx, 'cr_hom'] = 1 - np.exp(-lambda_hom_sum)
 
-    penetrance_model = PenetranceModelFactory.create_model(args.penetrance_model, df, cumulative_risk_df)
+    penetrance_model = PenetranceModelFactory.create_model(penetrance_model, df, cumulative_risk_df)
 
     # Calculate penetrance for each liability class
     df = penetrance_model.calculate_penetrance(df, cumulative_risk_df)
@@ -150,11 +167,28 @@ def main():
     #print (liability_classes_df)
 
     # Create the exporter and export data
-    logging.info(f"Exporting data in {args.output_format} format to {args.output_file}.")
-    exporter = PenetranceExporterFactory.create_exporter(args.output_format, args.output_file)
-    exporter.export_data(liability_classes_df)
+    logging.debug(f"Exporting data in {output_format} format to {output_file}.")
+    exporter = PenetranceExporterFactory.create_exporter(output_format, output_file)
+    result = exporter.export_data(liability_classes_df)
+    logging.debug("Export completed.")
+    return result 
 
-    logging.info("Export completed.")
+def main():
+    args = parse_arguments()
+    result = run_penetrance_calculation(
+        dataset=args.dataset,
+        population=args.population,
+        log_level=args.log_level,
+        force_download=args.force_download,
+        phenotypes=args.phenotypes,
+        crhf_model=args.crhf_model,
+        rr_model=args.rr_model,
+        penetrance_model=args.penetrance_model,
+        cr_model=args.cr_model,
+        gene=args.gene,
+        output_format=args.output_format,
+        output_file=args.output_file
+    )
 
 if __name__ == "__main__":
     main()

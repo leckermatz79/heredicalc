@@ -63,7 +63,6 @@ class IncidenceDataModel(ABC):
             return df[col_spec]  # Column as name
         else:
             raise ValueError(f"Invalid column specification for '{column_name}' in sources.yaml.")
-        
     def filter_by_phenotypes(self, df, phenotypes):
         """
         Filter data by phenotypes based on the mappings in sources.yaml.
@@ -112,7 +111,7 @@ class IncidenceDataModel(ABC):
         """
         if 'age_class_lower' in data_frame.columns and 'age_class_upper' in data_frame.columns:
             data_frame['age_span'] = data_frame.apply(
-                lambda row: (row['age_class_upper'] - row['age_class_lower'])+1 if pd.notnull(row['age_class_upper']) else "open-ended",
+                lambda row: (row['age_class_upper'] - row['age_class_lower'])+1 if pd.notnull(row['age_class_upper']) else 0, #was:'open-ended'
                 axis=1
             )
             logging.info("Default age span column added.")
@@ -120,6 +119,9 @@ class IncidenceDataModel(ABC):
             logging.warning("Age group columns not found; skipping age span calculation.")
         return data_frame
 
+    def remove_unknowns (self, *args, **kwargs):
+        pass
+    
     @abstractmethod
     def parse_data(self, df):
         """Abstract method to be implemented in subclasses."""

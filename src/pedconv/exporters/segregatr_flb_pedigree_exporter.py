@@ -31,8 +31,8 @@ class SegregatrFLBPedigreeExporter(PedigreeExporter):
         proband_id = df[df["is_index_person"] == True]["id"].iloc[0] if any(df["is_index_person"]) else "NA"
 
         # Determine affected and unknown based on phenotypes list
-        affected = df[df['phenotypes'].apply(lambda x: bool(x) and any(p.get("phenotype") != "unaff" for p in x))]["id"].astype(str).tolist()
-        unknown = df[df['phenotypes'].apply(lambda x: not x)]["id"].astype(str).tolist()
+        affected = df[df['phenotypes'].apply(lambda x: bool(x) and any(p.get("phenotype") not in ("Unaffected", "Unknown") for p in x))]["id"].astype(str).tolist()
+        unknown = df[df['phenotypes'].apply(lambda x: bool(x) and any(p.get("phenotype") == "Unknown" for p in x))]["id"].astype(str).tolist()
 
         # Create vectors in R format for each column needed by segregatr
         id_vector = ", ".join(df["id"].astype(str).fillna("NA"))

@@ -3,7 +3,7 @@ PedID	IndID	Mother	Father	Sex	Aff	Age	Geno	FPTP
 91-00005	2	0	0	F	BrCa	65	.	0
 91-00005	3	2	1	F	.	81	.	0
 91-00005	4	2	1	M	unaff	41	.	0
-91-00005	5	0	0	F	.	89	.	0
+91-00005	5	0	0	F	.	80	.	0
 91-00005	6	2	1	F	unaff	75	Het	0
 91-00005	7	0	0	M	unaff	80	.	0
 91-00005	8	2	1	F	unaff	60	Neg	0

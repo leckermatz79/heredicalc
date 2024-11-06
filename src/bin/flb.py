@@ -8,6 +8,9 @@ from src.pedconv.exporters.pedigree_exporter_factory import PedigreeExporterFact
 from src.pedconv.importers.pedigree_importer_factory import PedigreeImporterFactory
 from src.penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
 from src.flb.liabilities_mapper import map_liabilities
+from src.core.setup_logging import setup_logging
+from src.bin.penetrances import run_penetrance_calculation
+
 #from pedconv.exporters import FLBExporter
 from hashlib import md5
 import sys
@@ -50,19 +53,27 @@ def check_cache(hash_value):
     cache_file = CACHE_DIR / f"{hash_value}_liabilities.pkl"
     return cache_file if cache_file.exists() else None
 
-def calculate_liabilities(dataset, population, phenotypes, gene, crhf_model, rr_model, cr_model, hash_value, penetrance_model):
+def calculate_liabilities(ds, pop, phenos, gene_symbol, crhf, rr, cr, hash_value, pen_model, log_level, force_dl):
     # Run penetrances.py to recalculate liabilities and save to cache
-    cache_file = CACHE_DIR / f"{hash_value}_liabilities.pkl"
-    result = subprocess.run(
-        ["python", "src/bin/penetrances.py", "--dataset", dataset,
-         "--population", population, "--phenotypes", *phenotypes, "--gene", gene,
-         "--crhf_model", crhf_model, "--rr_model", rr_model, "--cr_model", cr_model, "--penetrance_model", penetrance_model,
-         "--output_format", "plain", "--output_file", str(cache_file)],
-        capture_output=False, text=True
+    cache_file = CACHE_DIR / f"{hash_value}_penetrances.pkl"
+    pen_recalc = run_penetrance_calculation(
+            dataset=ds,
+            population=pop,
+            phenotypes=phenos,
+            crhf_model=crhf,
+            rr_model=rr,
+            penetrance_model=pen_model,
+            cr_model=cr,
+            gene=gene_symbol,
+            output_format="plain",
+            output_file=str(cache_file),
+            force_download = force_dl,
+            log_level = log_level
     )
-    if result.returncode != 0:
-        raise RuntimeError(f"Error calculating liabilities: {result.stderr}")
-    return cache_file
+    if pen_recalc:
+        return cache_file
+    else:  
+        return False
 
 def run_flb_calculation(r_input, use_file=False):
     """
@@ -123,10 +134,12 @@ def main():
     parser.add_argument("--afreq", default="0.0001", help="Specify allele frequency (default: 0.0001)")
     parser.add_argument("--force_recalculate", type=str, choices=["no", "yes", "ask"], default="no", 
                         help="Recalculation option for liabilities: 'no' (default), 'yes' to force recalculation, or 'ask' to confirm.")
+    parser.add_argument("--force_download", type=str, choices=["no", "yes", "ask"], default="no", 
+                        help="Force fresh download of incidence data, if applicalbe 'no' (default), 'yes' to force download, or 'ask' to confirm.")
     parser.add_argument("--output", type=str, default="stdout", help="Output target: 'stdout' or file path")
 
     args = parser.parse_args()
-    logging.basicConfig(level=args.log_level)
+    setup_logging(args.log_level)
     validate_args(args)
 
 
@@ -166,9 +179,12 @@ def main():
         try:
             liabilities_file = calculate_liabilities(
                 args.dataset, args.population, args.phenotypes, args.gene, 
-                args.crhf_model, args.rr_model, args.cr_model, hash_value, args.penetrance_model
+                args.crhf_model, args.rr_model, args.cr_model, hash_value, args.penetrance_model, args.log_level, args.force_download
             )
-            logging.info(f"(Re-)calculated and cached liabilities data: {liabilities_file}")
+            if liabilities_file:
+                logging.info(f"(Re-)calculated and cached liabilities data: {liabilities_file}")
+            else: 
+                logging.error ("(Re-)calculation of liabilities failed.")
         except RuntimeError as e:
             logging.error(f"Failed to calculate liabilities: {e}")
             sys.exit(1)
@@ -187,6 +203,7 @@ def main():
         sys.exit(1)
 
     # Step 4: Export liabilities in FLB format
+    #liab_exporter = PenetranceExporterFactory.create_exporter('plain', 'stdout')
     liab_exporter = PenetranceExporterFactory.create_exporter('flb', None)
     if liab_exporter is None:
         logging.error("Failed to create Penetrance exporter for FLB format.")
@@ -196,6 +213,10 @@ def main():
     # Step 5: Concatenate strings for R-script
     allele_freq = float(args.afreq)
     r_input_str = f"{flb_pedigree}\n{liability_vector_str}\n{flb_liabilities}\nallele_freq <- {allele_freq}"
+
+    logging.debug(r_input_str)
+    sys.exit(0)
+
     if len(r_input_str) < CLI_CUTOFF:
         flb_result = run_flb_calculation(r_input_str)
     else:
@@ -205,8 +226,7 @@ def main():
         try:
             flb_result = run_flb_calculation(tmpfile_path, use_file=True)
         finally:
-            pass
-            #Path(tmpfile_path).unlink()  # Delete the temporary file
+            Path(tmpfile_path).unlink()  # Delete the temporary file
 
     # Step 6: Output the FLB result
     if args.output == "stdout":
