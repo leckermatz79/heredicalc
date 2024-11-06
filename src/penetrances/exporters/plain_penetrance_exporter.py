@@ -19,6 +19,7 @@ class PlainPenetranceExporter(PenetranceExporter):
         if self.output_file is None:
             return liability_classes_df
         elif self.output_file == "stdout":
+            pd.options.display.float_format = '{:.10f}'.format
             print(liability_classes_df)
             pd.reset_option('display.max_rows')
             return True

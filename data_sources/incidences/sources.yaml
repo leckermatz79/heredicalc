@@ -47,7 +47,7 @@ sources:
 
   ci5_ix:
     type: "online"
-    description: "Cancer Incidence in Five Continents IX"
+    description: "Cancer Incidence in Five Continents IX (1998-2002)"
     url: "https://gco.iarc.fr/media/ci5/data/ci5-ix/old/vol9/CI5-IXd.zip"
     parser: "ci5_detailed_incidence_model"
     data_dir: "ci5_ix"
@@ -217,7 +217,7 @@ sources:
 
   ci5_xi_detailed:
     type: "online"
-    description: "Cancer Incidence in Five Continents XI - detailed"
+    description: "Cancer Incidence in Five Continents XI - detailed (2008-2012)"
     url: "https://gco.iarc.fr/media/ci5/data/ci5-xi/CI5-XId.zip"
     parser: "ci5_detailed_incidence_model"
     data_dir: "ci5_xi_detailed"

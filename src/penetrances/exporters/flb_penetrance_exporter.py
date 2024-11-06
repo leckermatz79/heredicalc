@@ -38,7 +38,8 @@ class FLBPenetranceExporter(PenetranceExporter):
         penetrance_matrix = liability_classes_df[["penetrance_nc", "penetrance_het", "penetrance_hom"]].to_numpy()
 
         output = "penetrances = matrix(c(\n"
-        output += ",\n".join(", ".join(map(str, row)) for row in penetrance_matrix)
+        #output += ",\n".join(", ".join(map(str, row)) for row in penetrance_matrix)
+        output += ",\n".join(", ".join(map(lambda x: f"{x:.10f}", row)) for row in penetrance_matrix)
         output += "), ncol=3, byrow=TRUE)\n\n"
 
         # logging.debug(output)

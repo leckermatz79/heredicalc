@@ -51,11 +51,12 @@ def generate_hash(dataset, population, phenotypes, gene, crhf_model, rr_model, c
 def check_cache(hash_value):
     # Check if a cached file for the hash value exists
     cache_file = CACHE_DIR / f"{hash_value}_liabilities.pkl"
+    logging.debug(f"file name generated in check_cache: {cache_file}")
     return cache_file if cache_file.exists() else None
 
 def calculate_liabilities(ds, pop, phenos, gene_symbol, crhf, rr, cr, hash_value, pen_model, log_level, force_dl):
     # Run penetrances.py to recalculate liabilities and save to cache
-    cache_file = CACHE_DIR / f"{hash_value}_penetrances.pkl"
+    cache_file = CACHE_DIR / f"{hash_value}_liabilities.pkl"
     pen_recalc = run_penetrance_calculation(
             dataset=ds,
             population=pop,
@@ -158,6 +159,7 @@ def main():
     # Step 2: Prepare liabilities (check cache or recalculate)
     hash_value = generate_hash(args.dataset, args.population, args.phenotypes, args.gene, args.crhf_model, args.rr_model, args.cr_model, args.penetrance_model)
     cached_file = check_cache(hash_value)
+    logging.debug(f"hash_value: {hash_value}\ncheck_cache (None if file doesn't exist): {cached_file}")
     liabilities_data = None
     if cached_file and args.force_recalculate == "ask":
         # Ask user if recalculation is desired
@@ -215,7 +217,7 @@ def main():
     r_input_str = f"{flb_pedigree}\n{liability_vector_str}\n{flb_liabilities}\nallele_freq <- {allele_freq}"
 
     logging.debug(r_input_str)
-    sys.exit(0)
+    #sys.exit(0)
 
     if len(r_input_str) < CLI_CUTOFF:
         flb_result = run_flb_calculation(r_input_str)

@@ -168,9 +168,13 @@ def run_penetrance_calculation(dataset, population, log_level="INFO", force_down
 
     # Create the exporter and export data
     logging.debug(f"Exporting data in {output_format} format to {output_file}.")
+    exporter = PenetranceExporterFactory.create_exporter(output_format, None)
+    result = exporter.export_data(liability_classes_df)
+    logging.debug(result)
+
     exporter = PenetranceExporterFactory.create_exporter(output_format, output_file)
     result = exporter.export_data(liability_classes_df)
-    logging.debug("Export completed.")
+    logging.debug(f"Export completed. (result:{result})")
     return result 
 
 def main():
