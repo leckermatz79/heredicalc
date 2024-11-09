@@ -1,6 +1,6 @@
 rr_test.py
 import logging
-from src.penetrances.relative_risk.static_lookup_rr_model import StaticLookupRRModel
+from heredicalc.penetrances.relative_risk.static_lookup_rr_model import StaticLookupRRModel
 
 # Set up logging to display debug information in the console
 logging.basicConfig(level=logging.DEBUG)
