@@ -2,11 +2,11 @@
 import logging
 import argparse
 import pandas as pd
-from src.core.setup_logging import setup_logging
-from src.core.setup_data_sources import load_incidence_data_sources
-from src.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
-from src.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
-from src.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
+from heredicalc.core.setup_logging import setup_logging
+from heredicalc.core.setup_data_sources import load_incidence_data_sources
+from heredicalc.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
+from heredicalc.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
+from heredicalc.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Calculate relative risks for specified phenotypes.")

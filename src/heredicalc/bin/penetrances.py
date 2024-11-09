@@ -4,15 +4,15 @@ import logging
 import pandas as pd
 import numpy as np
 import sys
-from src.core.setup_logging import setup_logging
-from src.core.setup_data_sources import load_incidence_data_sources
-from src.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
-from src.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
-from src.cumulative_risks.cumulative_risk_model_factory import CumulativeRiskModelFactory
-from src.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
-from src.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
-from src.penetrances.penetrance_models.penetrance_model_factory import PenetranceModelFactory
-from src.penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
+from heredicalc.core.setup_logging import setup_logging
+from heredicalc.core.setup_data_sources import load_incidence_data_sources
+from heredicalc.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
+from heredicalc.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
+from heredicalc.cumulative_risks.cumulative_risk_model_factory import CumulativeRiskModelFactory
+from heredicalc.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
+from heredicalc.penetrances.relative_risk_models.relative_risk_model_factory import RelativeRiskModelFactory
+from heredicalc.penetrances.penetrance_models.penetrance_model_factory import PenetranceModelFactory
+from heredicalc.penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Calculate penetrance for specified parameters.")

@@ -2,9 +2,9 @@
 
 import argparse
 import logging
-from src.pedconv.pedconv.pedigree import Pedigree
-from src.pedconv.exporters.pedigree_exporter_factory import PedigreeExporterFactory
-from src.pedconv.importers.pedigree_importer_factory import PedigreeImporterFactory
+from heredicalc.pedconv.pedconv.pedigree import Pedigree
+from heredicalc.pedconv.exporters.pedigree_exporter_factory import PedigreeExporterFactory
+from heredicalc.pedconv.importers.pedigree_importer_factory import PedigreeImporterFactory
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Convert pedigree data between different formats.")

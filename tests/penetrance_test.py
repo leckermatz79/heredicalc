@@ -1,9 +1,9 @@
 penetrances/penetrance_test.py
 import logging
 import pandas as pd
-from src.penetrances.penetrance_model_factory import PenetranceModelFactory
-from src.penetrances.relative_risk.static_lookup_rr_model import StaticLookupRRModel
-from src.penetrances.crhf_models import ConstantCRHFModel
+from heredicalc.penetrances.penetrance_model_factory import PenetranceModelFactory
+from heredicalc.penetrances.relative_risk.static_lookup_rr_model import StaticLookupRRModel
+from heredicalc.penetrances.crhf_models import ConstantCRHFModel
 
 # Set up logging to display debug information
 logging.basicConfig(level=logging.DEBUG)

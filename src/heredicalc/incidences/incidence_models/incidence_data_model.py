@@ -3,7 +3,7 @@ import os
 import logging
 import pandas as pd
 from abc import ABC, abstractmethod
-from src.core.config import PROJECT_ROOT
+from heredicalc.core.config import PROJECT_ROOT
 
 
 class IncidenceDataModel(ABC):

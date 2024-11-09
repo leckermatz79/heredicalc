@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import logging
 from .relative_risk_model import RelativeRiskModel
-from src.core.config import PROJECT_ROOT
+from heredicalc.core.config import PROJECT_ROOT
 
 
 class StaticLookupRRModel(RelativeRiskModel):

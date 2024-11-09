@@ -3,19 +3,19 @@ import subprocess
 import tempfile
 import logging
 from pathlib import Path
-from src.pedconv.pedconv.pedigree import Pedigree
-from src.pedconv.exporters.pedigree_exporter_factory import PedigreeExporterFactory
-from src.pedconv.importers.pedigree_importer_factory import PedigreeImporterFactory
-from src.penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
-from src.flb.liabilities_mapper import map_liabilities
-from src.core.setup_logging import setup_logging
-from src.bin.penetrances import run_penetrance_calculation
+from heredicalc.pedconv.pedconv.pedigree import Pedigree
+from heredicalc.pedconv.exporters.pedigree_exporter_factory import PedigreeExporterFactory
+from heredicalc.pedconv.importers.pedigree_importer_factory import PedigreeImporterFactory
+from heredicalc.penetrances.exporters.penetrance_exporter_factory import PenetranceExporterFactory
+from heredicalc.flb.liabilities_mapper import map_liabilities
+from heredicalc.core.setup_logging import setup_logging
+from heredicalc.bin.penetrances import run_penetrance_calculation
 
 #from pedconv.exporters import FLBExporter
 from hashlib import md5
 import sys
 import pandas as pd
-from src.core.config import PROJECT_ROOT
+from heredicalc.core.config import PROJECT_ROOT
 
 CACHE_DIR = Path("cache")  # Directory for cached liabilities
 CLI_CUTOFF = 10*1024

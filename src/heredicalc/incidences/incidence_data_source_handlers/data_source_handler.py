@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 import requests
 from abc import ABC, abstractmethod
-from src.core.config import PROJECT_ROOT
+from heredicalc.core.config import PROJECT_ROOT
 
 class DataSourceHandler(ABC):
     """Abstract base class for data download, verification, and management."""
