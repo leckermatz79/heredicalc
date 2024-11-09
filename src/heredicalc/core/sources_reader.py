@@ -7,7 +7,7 @@ Provides an interface for reading and querying information from sources.yaml.
 
 import yaml
 from pathlib import Path
-from config import PROJECT_ROOT
+from .config import PROJECT_ROOT
 
 class SourcesReader:
     def __init__(self, yaml_path=None):
