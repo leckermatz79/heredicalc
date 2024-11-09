@@ -6,7 +6,7 @@ from heredicalc.core.setup_logging import setup_logging
 from heredicalc.incidences.incidence_data_source_handlers.data_source_handler_factory import DataSourceHandlerFactory
 from heredicalc.incidences.incidence_models.incidence_data_model_factory import IncidenceDataModelFactory
 from heredicalc.penetrances.crhf_models.crhf_model_factory import CRHFModelFactory
-from core.setup_data_sources import load_incidence_data_sources
+from heredicalc.core.setup_data_sources import load_incidence_data_sources
 
 
 def parse_arguments():
