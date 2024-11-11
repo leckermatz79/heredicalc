@@ -4,10 +4,11 @@ src/heredicalc/core/sources_reader.py
 
 Provides an interface for reading and querying information from sources.yaml.
 """
-
+import logging
 import yaml
 from pathlib import Path
 from .config import PROJECT_ROOT
+
 
 class SourcesReader:
     def __init__(self, yaml_path=None):
@@ -23,10 +24,40 @@ class SourcesReader:
             raise FileNotFoundError(f"Could not find {self.yaml_path}")
         except yaml.YAMLError as e:
             raise RuntimeError(f"Error parsing YAML: {e}")
-
+    
+    def get_available_datasets(self):
+        """Retrieve all available dataset names."""
+        return list(self.sources.get("sources", {}).keys())
+    
     def get_dataset_info(self, dataset_name):
-        """Retrieve information for a specific dataset."""
-        return self.sources.get("sources", {}).get(dataset_name, {})
+        """
+        Get information for a specific dataset.
+        
+        Parameters:
+            dataset_name (str): The name of the dataset.
+        
+        Returns:
+            dict: Dictionary containing dataset information.
+        """
+        dataset_info = self.sources.get("sources", {}).get(dataset_name, {})
+
+        # Beschreibung, Kohorte und Populationen extrahieren
+        description = dataset_info.get("description", "No description available")
+        cohort = dataset_info.get("cohort", "")
+        population_mappings = dataset_info.get("population_mappings", {})
+        
+        # Phänotypen aus den Schlüsseln von phenotype_mappings extrahieren
+        phenotype_mappings = dataset_info.get("phenotype_mappings", {})
+        phenotypes = list(phenotype_mappings.keys())
+        
+
+        # Das finale Dictionary zusammenstellen
+        return {
+            "description": description,
+            "cohort": cohort,
+            "population_mappings": population_mappings,
+            "phenotypes": phenotypes,  # Verwende die Schlüssel von phenotype_mappings
+        }
 
     def list_available_datasets(self):
         """List all available datasets in sources.yaml."""

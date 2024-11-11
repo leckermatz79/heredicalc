@@ -1,8 +1,20 @@
 #!/usr/bin/env Rscript
-options(repos = c(CRAN = "https://cloud.r-project.org"))
-if (!requireNamespace("segregatr", quietly = TRUE)) {
-  install.packages("segregatr")
+# List of required packages
+required_packages <- c("pedtools", "segregatr")
+
+# Function to install missing packages
+install_if_missing <- function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    cat(sprintf("Installing missing package: %s\n", pkg))
+    install.packages(pkg, repos = "https://cloud.r-project.org")
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      stop(sprintf("Failed to install package: %s", pkg))
+    }
+  }
 }
+
+# Install and load each required package
+invisible(sapply(required_packages, install_if_missing))
 
 # Load necessary libraries
 library(segregatr)

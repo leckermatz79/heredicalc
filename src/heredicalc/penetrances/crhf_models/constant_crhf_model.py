@@ -4,6 +4,8 @@ import os
 import pandas as pd
 import logging
 from .crhf_model import CRHFModel
+from src.heredicalc.core.config import PROJECT_ROOT
+from pathlib import Path
 
 class ConstantCRHFModel(CRHFModel):
     """
@@ -22,9 +24,8 @@ class ConstantCRHFModel(CRHFModel):
             crhf_file_path (str): Path to the CSV file with constant CRHF values.
         """
         super().__init__(gene, data_frame)
-        self.crhf_file_path = crhf_file_path or os.path.join(
-            os.path.dirname(__file__), "..", "..", "data_sources", "penetrances", "crhf", "constant_crhf_model.csv"
-        )
+        self.crhf_file_path = crhf_file_path or PROJECT_ROOT / "data_sources" / "penetrances" / "crhf" / "constant_crhf_model.csv"
+        #os.path.join(os.path.dirname(__file__), "..", "..", "data_sources", "penetrances", "crhf", "constant_crhf_model.csv")
         self.crhf_value = self._load_crhf_value()
 
     def _load_crhf_value(self):
