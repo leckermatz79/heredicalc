@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import logging
 from .crhf_model import CRHFModel
-from src.heredicalc.core.config import PROJECT_ROOT
+from heredicalc.core.config import PROJECT_ROOT
 from pathlib import Path
 
 class ConstantCRHFModel(CRHFModel):

@@ -65,7 +65,7 @@ sources:
       - population_id: 20320199
         cool_label: Argentina
         description: Argentina
-      - population_id: 20760899
+      - population_id: 20760199
         cool_label: Brazil
         description: "*Brazil (Sao Paolo)"
       - population_id: 21700199
@@ -73,61 +73,61 @@ sources:
         description: Colombia
       - population_id: 21880099
         cool_label: CostaRica
-        description: CostaRica
+        description: "Costa Rica"
       - population_id: 22180199
         cool_label: Ecuador
         description: Ecuador
       - population_id: 31240099
         cool_label: Canada
         description: Canada
-      - population_id: 38400942
+      - population_id: 38408042
         cool_label: US_Natives
-        description: "*USA, New Mexico: American Indian"
+        description: "*USA, New Mexico: American Indian" 
       - population_id: 38402450
         cool_label: US_Hispanic
-        description: "*USA, SEER (14 Registries): Hispanic White"
+        description: "*USA, SEER (14 Registries): Hispanic White "
       - population_id: 38402429
         cool_label: US_Asian
-        description: "*USA, SEER (14 Registries): Asian and Pacific Islander"
+        description: "*USA, SEER (14 Registries): Asian and Pacific Islander" 
       - population_id: 38402010
         cool_label: US_White
-        description: "*USA, SEER (9 Registries): White"
+        description: "*USA, SEER (9 Registries): White" 
       - population_id: 38402030
         cool_label: US_Black
-        description: "*USA, SEER (9 Registries): Black"
-      - population_id: 41560399
+        description: "*USA, SEER (9 Registries): Black "
+      - population_id: 41560199
         cool_label: China
-        description: "*China, Shanghai"
-      - population_id: 43560399
+        description: "*China, Shanghai "
+      - population_id: 43560299
         cool_label: India
-        description: "*India, Mumbai (Bombay)"
+        description: "*India, Mumbai (Bombay) "
       - population_id: 43760090
         cool_label: Israel_Jews
-        description: "Israel: Jews"
+        description: "Israel: Jews "
       - population_id: 43760099
         cool_label: Israel
         description: "Israel: Non-Jews"
       - population_id: 43920299
         cool_label: Japan
-        description: "*Japan, Miyagi Prefecture"
+        description: "*Japan, Miyagi Prefecture "
       - population_id: 44100099
         cool_label: Korea
         description: Korea
-      - population_id: 44140025
+      - population_id: 44140099
         cool_label: Kuwait
-        description: "*Kuwait: Kuwaitis"
+        description: "*Kuwait: Kuwaitis "
       - population_id: 46080299
         cool_label: Philippines
         description: Philippines
       - population_id: 47640199
         cool_label: Thailand
-        description: "*Thailand, Chiang Mai"
+        description: "*Thailand, Chiang Mai "
       - population_id: 50400099
         cool_label: Austria
         description: Austria
-      - population_id: 50560499
+      - population_id: 50560099
         cool_label: Belgium
-        description: "*Belgium, Antwerp*"
+        description: "*Belgium, Antwerp *"
       - population_id: 51120099
         cool_label: Belarus
         description: Belarus
@@ -136,7 +136,7 @@ sources:
         description: Croatia
       - population_id: 52030099
         cool_label: Czech
-        description: "Czech Republic"
+        description: "Czech Republic "
       - population_id: 52080099
         cool_label: Denmark
         description: Denmark
@@ -145,10 +145,10 @@ sources:
         description: Estonia
       - population_id: 52500199
         cool_label: France
-        description: "*France, Bas-Rhin"
+        description: "*France, Bas-Rhin "
       - population_id: 52760299
         cool_label: Germany
-        description: "*Germany, Hamburg"
+        description: "*Germany, Hamburg "
       - population_id: 53520099
         cool_label: Iceland
         description: Iceland
@@ -157,7 +157,7 @@ sources:
         description: Ireland
       - population_id: 53800199
         cool_label: Italy
-        description: "*Italy, Florence and Prato"
+        description: "*Italy, Florence and Prato "
       - population_id: 54280099
         cool_label: Latvia
         description: Latvia
@@ -175,31 +175,31 @@ sources:
         description: Norway
       - population_id: 56160199
         cool_label: Poland
-        description: "*Poland, Cracow"
-      - population_id: 56200499
+        description: "*Poland, Cracow "
+      - population_id: 56200599
         cool_label: Portugal
-        description: "*Portugal, Porto"
+        description: "*Portugal, Porto "
       - population_id: 57050099
         cool_label: Slovenia
         description: Slovenia
-      - population_id: 57240299
+      - population_id: 57240199
         cool_label: Spain
-        description: "*Spain, Granada"
-      - population_id: 57560299
+        description: "*Spain, Granada "
+      - population_id: 57560199
         cool_label: Switzerland
-        description: "*Switzerland, Geneva"
-      - population_id: 57920299
+        description: "*Switzerland, Geneva "
+      - population_id: 47920199
         cool_label: Turkey
-        description: "*Turkey, Antalya"
-      - population_id: 58260699
+        description: "*Turkey, Antalya "
+      - population_id: 58260199
         cool_label: UK
-        description: "*UK, England, South and Western Regions"
-      - population_id: 60360499
+        description: "*UK, England, South and Western Regions "
+      - population_id: 60360299
         cool_label: Australia
-        description: "*Australia, South"
+        description: "*Australia, South "
       - population_id: 65540099
         cool_label: NewZealand
-        description: NewZealand
+        description: "New Zealand"
 
     phenotype_mappings:
       LungCancer: [77]
@@ -288,6 +288,154 @@ sources:
         - { min: null, max: null }  # class for unknown age
       unknown_age_class: 19
       open_ended_age_class: 18
+    population_mappings:
+      - population_id: 10120199
+        cool_label: Algeria
+        description: "Algeria, Sétif"
+      - population_id: 17160270
+        cool_label: Zimbabwe
+        description: "Zimbabwe, Harare: African"
+      - population_id: 18000299
+        cool_label: Uganda
+        description: "Uganda, Kyadondo County"
+      - population_id: 20320199
+        cool_label: Argentina
+        description: "Argentina, Bahía Bianca*"
+      - population_id: 20760199
+        cool_label: Brazil
+        description: "Brazil, Fortaleza*"
+      - population_id: 21700199
+        cool_label: Colombia
+        description: "Colombia, Cali*"
+      - population_id: 21880099
+        cool_label: CostaRica
+        description: "Costa Rica"
+      - population_id: 22180199
+        cool_label: Ecuador
+        description: "Ecuador, Quito*"
+      - population_id: 31240099
+        cool_label: Canada
+        description: "Canada"
+      - population_id: 38408042
+        cool_label: US_Natives
+        description: "USA, NPCR (42 states): American Indian*"
+      - population_id: 38402450
+        cool_label: US_Hispanic
+        description: "USA, SEER (18 registries): Hispanic White"
+      - population_id: 38402429
+        cool_label: US_Asian
+        description: "USA,  SEER (18 registries): Asian and Pacific Islander "
+      - population_id: 38402410
+        cool_label: US_White
+        description: "USA, SEER (18 registries): White "
+      - population_id: 38402430
+        cool_label: US_Black
+        description: "USA, SEER (18 registries): Black"
+      - population_id: 41560199
+        cool_label: China
+        description: "China, Beijing City*"
+      - population_id: 43560299
+        cool_label: India
+        description: "India, Banglore*"
+      - population_id: 43760090
+        cool_label: Israel_Jews
+        description: "Israel: Jews "
+      - population_id: 43760099
+        cool_label: Israel
+        description: "Israel: Non-Jews"
+      - population_id: 43920299
+        cool_label: Japan
+        description: "Japan, Miyagi Prefecture*"
+      - population_id: 44100099
+        cool_label: Korea
+        description: "Republic of Korea"
+      - population_id: 44140099
+        cool_label: Kuwait
+        description: "Kuwait"
+      - population_id: 46080299
+        cool_label: Philippines
+        description: "Philippines, Manila*"
+      - population_id: 47640199
+        cool_label: Thailand
+        description: "Thailand, Chiang Mai*"
+      - population_id: 50400099
+        cool_label: Austria
+        description: "Austria"
+      - population_id: 50560099
+        cool_label: Belgium
+        description: "Belgium"
+      - population_id: 51120099
+        cool_label: Belarus
+        description: "Belarus"
+      - population_id: 51910099
+        cool_label: Croatia
+        description: "Croatia"
+      - population_id: 52030099
+        cool_label: Czech
+        description: "Czech Republic "
+      - population_id: 52080099
+        cool_label: Denmark
+        description: "Denmark"
+      - population_id: 52330099
+        cool_label: Estonia
+        description: "Estonia"
+      - population_id: 52500199
+        cool_label: France
+        description: "France, Bas-Rhin*"
+      - population_id: 52760299
+        cool_label: Germany
+        description: "Germany, Hamburg*"
+      - population_id: 53520099
+        cool_label: Iceland
+        description: "Iceland"
+      - population_id: 53720099
+        cool_label: Ireland
+        description: "Ireland"
+      - population_id: 53800199
+        cool_label: Italy
+        description: "Italy, Florence and Prato*"
+      - population_id: 54280099
+        cool_label: Latvia
+        description: "Latvia"
+      - population_id: 54400099
+        cool_label: Lithuania
+        description: "Lithuania"
+      - population_id: 54700099
+        cool_label: Malta
+        description: "Malta"
+      - population_id: 55280099
+        cool_label: Netherlands
+        description: "The Netherlands"
+      - population_id: 55780099
+        cool_label: Norway
+        description: "Norway"
+      - population_id: 56160199
+        cool_label: Poland
+        description: "Poland, Cracow*"
+      - population_id: 56200599
+        cool_label: Portugal
+        description: "Portugal, Azores"
+      - population_id: 57050099
+        cool_label: Slovenia
+        description: "Slovenia"
+      - population_id: 57240199
+        cool_label: Spain
+        description: "Spain, Tarragona"
+      - population_id: 57560199
+        cool_label: Switzerland
+        description: "Switzerland, Basel"
+      - population_id: 47920199
+        cool_label: Turkey
+        description: "Turkey, Izmir*"
+      - population_id: 58260199
+        cool_label: UK
+        description: "UK, England*"
+      - population_id: 60360299
+        cool_label: Australia
+        description: "Australia, New South Wales*"
+      - population_id: 65540099
+        cool_label: NewZealand
+        description: "New Zealand"
 
   ci5_xi_summary:
     type: "online"
@@ -401,6 +549,154 @@ sources:
         - { min: null, max: null }  # class for unknown age
       unknown_age_class: 19
       open_ended_age_class: 18
+    population_mappings:
+      - population_id: 101200199
+        cool_label: Algeria
+        description: "Algeria, Setif*"
+      - population_id: 171600270
+        cool_label: Zimbabwe
+        description: "Zimbabwe, Harare: African"
+      - population_id: 180000299
+        cool_label: Uganda
+        description: "Uganda, Kyadondo County"
+      - population_id: 203201199
+        cool_label: Argentina
+        description: "Argentina, Chaco*"
+      - population_id: 207601199
+        cool_label: Brazil
+        description: "Brazil, Aracaju*"
+      - population_id: 217000199
+        cool_label: Colombia
+        description: "Colombia, Cali*"
+      - population_id: 218800099
+        cool_label: CostaRica
+        description: "Costa Rica"
+      - population_id: 221800199
+        cool_label: Ecuador
+        description: "Ecuador, Quito*"
+      - population_id: 312400199
+        cool_label: Canada
+        description: "Canada, Alberta*"
+      - population_id: 384008042
+        cool_label: US_Natives
+        description: "USA, NPCR: American Indian/Alaska Natives"
+      - population_id: 384002450
+        cool_label: US_Hispanic
+        description: "USA,  SEER (18 registries): Hispanic White*"
+      - population_id: 384002429
+        cool_label: US_Asian
+        description: "USA,  SEER (18 registries): Asian and Pacific Islander *"
+      - population_id: 384002410
+        cool_label: US_White
+        description: "USA, SEER (18 registries): White *"
+      - population_id: 384002430
+        cool_label: US_Black
+        description: "USA, SEER (18 registries): Black*"
+      - population_id: 415600199
+        cool_label: China
+        description: "China, Beijing*"
+      - population_id: 435600299
+        cool_label: India
+        description: "India, Banglore*"
+      - population_id: 437600090
+        cool_label: Israel_Jews
+        description: "Israel: Jews "
+      - population_id: 437600099
+        cool_label: Israel
+        description: "Israel"
+      - population_id: 439201099
+        cool_label: Japan
+        description: "Japan,  Aichi Prefecture*"
+      - population_id: 441000099
+        cool_label: Korea
+        description: "Republic of Korea"
+      - population_id: 441400099
+        cool_label: Kuwait
+        description: "Kuwait"
+      - population_id: 460800299
+        cool_label: Philippines
+        description: "Philippines, Manila*"
+      - population_id: 476400199
+        cool_label: Thailand
+        description: "Thailand, Chiang Mai*"
+      - population_id: 504000099
+        cool_label: Austria
+        description: "Austria"
+      - population_id: 505600099
+        cool_label: Belgium
+        description: "Belgium"
+      - population_id: 511200099
+        cool_label: Belarus
+        description: "Belarus"
+      - population_id: 519100099
+        cool_label: Croatia
+        description: "Croatia"
+      - population_id: 520300099
+        cool_label: Czech
+        description: "Czech Republic "
+      - population_id: 520800099
+        cool_label: Denmark
+        description: "Denmark"
+      - population_id: 523300099
+        cool_label: Estonia
+        description: "Estonia"
+      - population_id: 525000199
+        cool_label: France
+        description: "France, Bas-Rhin*"
+      - population_id: 527600299
+        cool_label: Germany
+        description: "Germany, Hamburg*"
+      - population_id: 535200099
+        cool_label: Iceland
+        description: "Iceland"
+      - population_id: 537200099
+        cool_label: Ireland
+        description: "Ireland"
+      - population_id: 538000199
+        cool_label: Italy
+        description: "Italy, Florence and Prato*"
+      - population_id: 542800099
+        cool_label: Latvia
+        description: "Latvia"
+      - population_id: 544000099
+        cool_label: Lithuania
+        description: "Lithuania"
+      - population_id: 547000099
+        cool_label: Malta
+        description: "Malta"
+      - population_id: 552800099
+        cool_label: Netherlands
+        description: "The Netherlands"
+      - population_id: 557800099
+        cool_label: Norway
+        description: "Norway"
+      - population_id: 561601099
+        cool_label: Poland
+        description: "Greater Poland*"
+      - population_id: 562000599
+        cool_label: Portugal
+        description: "Portugal, Azores"
+      - population_id: 570500099
+        cool_label: Slovenia
+        description: "Slovenia"
+      - population_id: 572400199
+        cool_label: Spain
+        description: "Spain, Tarragona"
+      - population_id: 575601299
+        cool_label: Switzerland
+        description: "Switzerland, Fribourg*"
+      - population_id: 479200199
+        cool_label: Turkey
+        description: "Turkey, Izmir*"
+      - population_id: 582600199
+        cool_label: UK
+        description: "UK, England*"
+      - population_id: 603600099
+        cool_label: Australia
+        description: "Australia"
+      - population_id: 655400099
+        cool_label: NewZealand
+        description: "New Zealand"
 
   ci5_xii_summary:
     type: "online"
@@ -558,4 +854,151 @@ sources:
         - { min: null, max: null }  # class for unknown age
       unknown_age_class: 19
       open_ended_age_class: 18
-
+    population_mappings:
+      - population_id: 101200399
+        cool_label: Algeria
+        description: "Algeria, Batna*"
+      - population_id: 171600270
+        cool_label: Zimbabwe
+        description: "Zimbabwe, Harare: African*"
+      - population_id: 180000299
+        cool_label: Uganda
+        description: "Uganda, Kyadondo County*"
+      - population_id: 203200599
+        cool_label: Argentina
+        description: "Argentina,  Entre Ríos Province "
+      - population_id: 207601199
+        cool_label: Brazil
+        description: "Brazil, Aracaju*"
+      - population_id: 217000199
+        cool_label: Colombia
+        description: "Colombia, Cali*"
+      - population_id: 218800099
+        cool_label: CostaRica
+        description: "Costa Rica"
+      - population_id: 221800199
+        cool_label: Ecuador
+        description: "Ecuador, Quito*"
+      - population_id: 312400199
+        cool_label: Canada
+        description: "Canada, Alberta*"
+      - population_id: 384008042
+        cool_label: US_Natives
+        description: "USA, NPCR: American Indian "
+      - population_id: 384002450
+        cool_label: US_Hispanic
+        description: "USA,  SEER (18 registries): Hispanic White*"
+      - population_id: 384002429
+        cool_label: US_Asian
+        description: "USA,  SEER (18 registries): Asian and Pacific Islander *"
+      - population_id: 384002410
+        cool_label: US_White
+        description: "USA, SEER (18 registries): White *"
+      - population_id: 384002430
+        cool_label: US_Black
+        description: "USA, SEER (18 registries): Black*"
+      - population_id: 415600199
+        cool_label: China
+        description: "China, Beijing City *"
+      - population_id: 435600299
+        cool_label: India
+        description: "India, Bangalore*"
+      - population_id: 437600090
+        cool_label: Israel_Jews
+        description: "Israel: Jews "
+      - population_id: 437600099
+        cool_label: Israel
+        description: "Israel"
+      - population_id: 439200099
+        cool_label: Japan
+        description: "Japan"
+      - population_id: 441000099
+        cool_label: Korea
+        description: "Republic of Korea"
+      - population_id: 441400099
+        cool_label: Kuwait
+        description: "Kuwait"
+      - population_id: 460800299
+        cool_label: Philippines
+        description: "Philippines, Manila"
+      - population_id: 476400199
+        cool_label: Thailand
+        description: "Thailand, Chiang Mai*"
+      - population_id: 504000099
+        cool_label: Austria
+        description: "Austria"
+      - population_id: 505600099
+        cool_label: Belgium
+        description: "Belgium"
+      - population_id: 511200099
+        cool_label: Belarus
+        description: "Belarus"
+      - population_id: 519100099
+        cool_label: Croatia
+        description: "Croatia"
+      - population_id: 520300099
+        cool_label: Czech
+        description: "Czech Republic "
+      - population_id: 520800099
+        cool_label: Denmark
+        description: "Denmark"
+      - population_id: 523300099
+        cool_label: Estonia
+        description: "Estonia"
+      - population_id: 525000199
+        cool_label: France
+        description: "France, Bas-Rhin*"
+      - population_id: 527600299
+        cool_label: Germany
+        description: "Germany, Hamburg*"
+      - population_id: 535200099
+        cool_label: Iceland
+        description: "Iceland"
+      - population_id: 537200099
+        cool_label: Ireland
+        description: "Ireland"
+      - population_id: 538005099
+        cool_label: Italy
+        description: "Italy, Aosta Valley*"
+      - population_id: 542800099
+        cool_label: Latvia
+        description: "Latvia"
+      - population_id: 544000099
+        cool_label: Lithuania
+        description: "Lithuania"
+      - population_id: 547000099
+        cool_label: Malta
+        description: "Malta"
+      - population_id: 552800099
+        cool_label: Netherlands
+        description: "The Netherlands"
+      - population_id: 557800099
+        cool_label: Norway
+        description: "Norway"
+      - population_id: 561600799
+        cool_label: Poland
+        description: "Poland, Kielca*"
+      - population_id: 562000599
+        cool_label: Portugal
+        description: "Portugal, Azores"
+      - population_id: 570500099
+        cool_label: Slovenia
+        description: "Slovenia"
+      - population_id: 572400199
+        cool_label: Spain
+        description: "Spain, Tarragona"
+      - population_id: 575600199
+        cool_label: Switzerland
+        description: "Switzerland, Basel"
+      - population_id: 479200199
+        cool_label: Turkey
+        description: "Turkey, Izmir*"
+      - population_id: 582600199
+        cool_label: UK
+        description: "UK, England*"
+      - population_id: 603600299
+        cool_label: Australia
+        description: "Australia,  NSW/ACT*"
+      - population_id: 655400099
+        cool_label: NewZealand
+        description: "New Zealand"

@@ -1,0 +1,1 @@
+flb --gene BRCA1 --crhf_model constant --rr_model static_lookup --cr_model simple --penetrance_model uniform_survival --dataset ci5_ix --phenotypes BreastCancer OvarianCancer PancreaticCancer --log-level INFO --population 10120199 --pedigree_format cool --pedigree_file tests/91-00005-05.ped

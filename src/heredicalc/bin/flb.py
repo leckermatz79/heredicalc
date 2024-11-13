@@ -232,10 +232,10 @@ def main():
 
     # Step 6: Output the FLB result
     if args.output == "stdout":
-        print(f"FLB Result:\n{flb_result}")
+        print(f"{flb_result}")
     else:
         with open(args.output, "w") as f:
-            f.write(f"FLB Result:\n{flb_result}")
+            f.write(f"{flb_result}")
 
 if __name__ == "__main__":
     main()
