@@ -88,7 +88,8 @@ class CoolPedigreeImporter(PedigreeImporter):
             'U.leuk': 'Leukemia', 
             'Leuk': 'Leukemia', 
             'Lymph': None, 
-            "." : "Unknown" 
+            "." : "Unknown",
+
         }
         self.file_path = file_path
 
